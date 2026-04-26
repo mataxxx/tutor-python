@@ -169,39 +169,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="step-pip pending" id="pip2">2</div>
       <div class="step-line" id="line2"></div>
       <div class="step-pip pending" id="pip3">3</div>
-      <div class="step-line" id="line3"></div>
-      <div class="step-pip pending" id="pip4">4</div>
     </div>
 
-    <!-- STEP 1: LOGIN -->
+    <!-- STEP 1: MODEL + API KEY -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión</div>
-      <div class="step-sub">Ingresá tu email y te mandamos un link para entrar. Sin contraseña. Tu progreso se guarda automáticamente.</div>
-      <div>
-        <div class="field-lbl">Tu email</div>
-        <input class="field-inp" type="email" id="loginEmail" placeholder="tu@email.com">
-      </div>
-      <div id="magicMsg" style="display:none;font-size:12px;color:#3fb950;background:#0d2f1a;border:1px solid #238636;border-radius:8px;padding:10px 14px;line-height:1.6"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" id="btnMagic">Enviar magic link →</button>
-      </div>
-      <div style="font-size:11px;color:#6e7681;text-align:center">¿Ya tenés sesión activa? <a href="#" id="skipLogin" style="color:#58a6ff">Continuar directo →</a></div>
-    </div>
-
-    <!-- STEP 2: MODEL + API KEY -->
-    <div class="step-body" id="step2" style="display:none">
       <div class="step-title">Elegí tu IA</div>
-      <div class="step-sub">Seleccioná el modelo. Tu API key se guarda en la nube — no la tendrás que volver a ingresar.</div>
+      <div class="step-sub">Seleccioná el modelo que querés usar como tutor. Tu key solo vive en esta pestaña.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="model-card sel" id="mc-anthropic" onclick="selectModel('anthropic')">
           <div style="font-size:22px">🤖</div>
           <div style="font-size:13px;font-weight:600;color:#e6edf3;margin:4px 0">Claude</div>
-          <div style="font-size:11px;color:#6e7681;line-height:1.4">Anthropic · claude-opus-4-6</div>
+          <div style="font-size:11px;color:#6e7681;line-height:1.4">Anthropic · claude-opus-4-6<br>Muy bueno para enseñar</div>
         </div>
         <div class="model-card" id="mc-gemma" onclick="selectModel('gemma')">
           <div style="font-size:22px">✨</div>
           <div style="font-size:13px;font-weight:600;color:#e6edf3;margin:4px 0">Gemma 4</div>
-          <div style="font-size:11px;color:#6e7681;line-height:1.4">Google · gemma-4-27b-it</div>
+          <div style="font-size:11px;color:#6e7681;line-height:1.4">Google · gemma-4-27b-it<br>Open source, gratis en AI Studio</div>
         </div>
       </div>
       <div>
@@ -210,52 +193,62 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
       <div class="helper" id="keyHelper">¿No tenés? → <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com/keys</a></div>
       <div class="btn-row">
-        <button class="btn btn-ghost" id="btn2back">← Atrás</button>
-        <button class="btn btn-primary" id="btn2">Siguiente →</button>
+        <button class="btn btn-primary" id="btn1">Siguiente →</button>
       </div>
     </div>
 
-    <!-- STEP 3: CODE UPLOAD -->
-    <div class="step-body" id="step3" style="display:none">
+    <!-- STEP 2: CODE UPLOAD -->
+    <div class="step-body" id="step2" style="display:none">
       <div class="step-title">Subí tu código Python</div>
-      <div class="step-sub">El tutor lo analiza y arma un plan personalizado para que lo entiendas.</div>
-      <div class="drop-zone" id="dropZone0">📂 Arrastrá tu .py acá o hacé clic para subirlo</div>
+      <div class="step-sub">El tutor lo va a analizar y armar un plan personalizado para que lo entiendas de verdad.</div>
+
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-icon">📂</div>
+        <div class="drop-title">Arrastrá tu .py acá</div>
+        <div class="drop-sub">o hacé clic para seleccionar el archivo</div>
+      </div>
+      <input type="file" id="fileInput" accept=".py,.txt" style="display:none">
+
       <div class="or-divider">o pegá el código directamente</div>
+
       <div class="paste-area-wrap">
         <textarea class="paste-area" id="codeInput" placeholder="# Pegá tu código Python acá..."></textarea>
       </div>
+
       <div class="btn-row">
-        <button class="btn btn-ghost" id="btn3back">← Atrás</button>
-        <button class="btn btn-primary" id="btn3" disabled>Analizar código →</button>
+        <button class="btn btn-ghost" id="btn2back">← Atrás</button>
+        <button class="btn btn-primary" id="btn2" disabled>Analizar código →</button>
       </div>
     </div>
 
-    <!-- STEP 4: ANALYSIS + LEVEL -->
-    <div class="step-body" id="step4" style="display:none">
+    <!-- STEP 3: ANALYSIS + LEVEL -->
+    <div class="step-body" id="step3" style="display:none">
       <div class="step-title">Análisis listo ✅</div>
       <div class="step-sub">Esto es lo que encontré en tu código:</div>
       <div class="analysis-box" id="analysisBox">Analizando...</div>
+
       <div style="font-size:13px;font-weight:500;color:#e6edf3">¿Cuál es tu nivel en Python?</div>
       <div class="level-cards">
         <div class="level-card sel" data-level="principiante" onclick="pickLevel(this)">
           <div class="lc-icon">🌱</div>
           <div class="lc-name">Principiante</div>
-          <div class="lc-desc">Primera vez programando</div>
+          <div class="lc-desc">Primera vez programando o recién empezando</div>
         </div>
         <div class="level-card" data-level="intermedio" onclick="pickLevel(this)">
           <div class="lc-icon">⚡</div>
           <div class="lc-name">Intermedio</div>
-          <div class="lc-desc">Conozco lo básico</div>
+          <div class="lc-desc">Conozco lo básico, quiero entender más a fondo</div>
         </div>
         <div class="level-card" data-level="avanzado" onclick="pickLevel(this)">
           <div class="lc-icon">🔥</div>
           <div class="lc-name">Avanzado</div>
-          <div class="lc-desc">Entiendo Python bien</div>
+          <div class="lc-desc">Entiendo Python, quiero ver el diseño del programa</div>
         </div>
       </div>
+
       <div class="btn-row">
-        <button class="btn btn-ghost" id="btn4back">← Atrás</button>
-        <button class="btn btn-success" id="btn4">¡Empezar sesión! →</button>
+        <button class="btn btn-ghost" id="btn3back">← Atrás</button>
+        <button class="btn btn-success" id="btn3">¡Empezar sesión! →</button>
       </div>
     </div>
 
@@ -400,12 +393,139 @@ function clearSession(){
 // ─── SUPABASE MAGIC LINK AUTH + SESSION RESTORE ─────────
 initSupabase();
 
+function showLoginUI(){
+  if(document.getElementById('loginBanner')) return;
+  var banner = document.createElement('div');
+  banner.id = 'loginBanner';
+  banner.style.cssText = 'background:#0d1f38;border:1px solid #1f6feb;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px';
+  banner.innerHTML =
+    '<div style="font-size:14px;font-weight:600;color:#e6edf3">☁️ Guardá tu progreso en la nube</div>' +
+    '<div style="font-size:12px;color:#8b949e;line-height:1.5">Ingresá tu email — te mandamos un link para entrar. Sin contraseña.</div>';
+
+  var emailRow = document.createElement('div');
+  emailRow.style.cssText = 'display:flex;gap:8px';
+  var emailInp = document.createElement('input');
+  emailInp.type = 'email';
+  emailInp.placeholder = 'tu@email.com';
+  emailInp.style.cssText = 'flex:1;padding:8px 10px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#e6edf3;font-size:12px;outline:none;font-family:inherit';
+  emailInp.onfocus = function(){ this.style.borderColor='#58a6ff'; };
+  emailInp.onblur  = function(){ this.style.borderColor='#30363d'; };
+
+  var sendBtn = document.createElement('button');
+  sendBtn.className = 'btn btn-primary';
+  sendBtn.style.cssText = 'font-size:12px;padding:8px 14px;white-space:nowrap';
+  sendBtn.textContent = 'Enviar link →';
+
+  var msgDiv = document.createElement('div');
+  msgDiv.style.cssText = 'font-size:12px;color:#3fb950;display:none;text-align:center;line-height:1.5';
+
+  sendBtn.onclick = function(){
+    var email = emailInp.value.trim();
+    if(!email || !email.includes('@')){ emailInp.style.borderColor='#d1242f'; return; }
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Enviando...';
+    supabase.auth.signInWithOtp({
+      email: email,
+      options: { emailRedirectTo: window.location.href }
+    }).then(function(r){
+      if(r.error){
+        msgDiv.style.color='#d1242f';
+        msgDiv.textContent = 'Error: ' + r.error.message;
+        msgDiv.style.display='block';
+        sendBtn.disabled=false;
+        sendBtn.textContent='Enviar link →';
+      } else {
+        emailRow.style.display='none';
+        msgDiv.style.color='#3fb950';
+        msgDiv.innerHTML = '✅ Link enviado a <strong>'+email+'</strong><br>Revisá tu email y hacé click en el link para entrar.';
+        msgDiv.style.display='block';
+      }
+    });
+  };
+
+  emailInp.addEventListener('keydown', function(e){ if(e.key==='Enter') sendBtn.click(); });
+
+  emailRow.appendChild(emailInp);
+  emailRow.appendChild(sendBtn);
+  banner.appendChild(emailRow);
+  banner.appendChild(msgDiv);
+
+  var skipBtn = document.createElement('button');
+  skipBtn.className = 'btn btn-ghost';
+  skipBtn.style.cssText = 'font-size:11px;align-self:center';
+  skipBtn.textContent = 'Continuar sin login (solo este dispositivo)';
+  skipBtn.onclick = function(){
+    currentUserId = 'guest_' + Math.random().toString(36).substr(2,9);
+    banner.remove();
+  };
+  banner.appendChild(skipBtn);
+
+  var step1 = document.getElementById('step1');
+  step1.insertBefore(banner, step1.querySelector('.btn-row'));
+}
 
 async function checkAuthAndRestore(){
   var r = await supabase.auth.getSession();
   var sess = r.data && r.data.session;
-  if(sess) proceedAfterLogin(sess);
-  // else stays on step 1 (magic link screen)
+
+  if(!sess){ showLoginUI(); return; }
+
+  var user = sess.user;
+  currentUserId = user.id;
+
+  // Show logged-in badge in wizard
+  var badge = document.createElement('div');
+  badge.style.cssText = 'background:#0d2f1a;border:1px solid #238636;border-radius:8px;padding:8px 12px;font-size:12px;color:#3fb950;display:flex;align-items:center;justify-content:space-between;gap:8px';
+  badge.innerHTML = '<span>✅ <strong>' + user.email + '</strong></span>';
+  var logoutBtn = document.createElement('button');
+  logoutBtn.className = 'btn btn-ghost';
+  logoutBtn.style.cssText = 'font-size:11px;padding:2px 8px';
+  logoutBtn.textContent = 'Salir';
+  logoutBtn.onclick = function(){ supabase.auth.signOut().then(function(){ location.reload(); }); };
+  badge.appendChild(logoutBtn);
+  var step1 = document.getElementById('step1');
+  step1.insertBefore(badge, step1.querySelector('.btn-row'));
+
+  // Try to restore saved session from Supabase
+  var saved = await loadSessionFromDB(currentUserId);
+  if(!saved || !saved.hist || saved.hist.length === 0) return;
+
+  var rb = document.createElement('div');
+  rb.style.cssText = 'background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px';
+  rb.innerHTML =
+    '<div style="font-size:13px;font-weight:600;color:#e6edf3">📖 Sesión guardada encontrada</div>' +
+    '<div style="font-size:11px;color:#8b949e">Guardada el ' + fmtDate(saved.updated_at) + ' · ' + saved.hist.length + ' mensajes</div>';
+
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px';
+
+  var btnR = document.createElement('button');
+  btnR.className = 'btn btn-success';
+  btnR.style.cssText = 'font-size:12px;padding:7px 14px;flex:1';
+  btnR.textContent = 'Continuar sesión →';
+  btnR.onclick = function(){
+    var key = document.getElementById('apiKey').value.trim();
+    if(!key){ alert('Ingresá tu API key primero.'); return; }
+    API_KEY = key;
+    nivel    = saved.nivel    || 'principiante';
+    userCode = saved.user_code|| '';
+    hist     = saved.hist     || [];
+    if(saved.modelo) selectedModel = saved.modelo;
+    restoreAndLaunch(saved.editor_code || '');
+  };
+
+  var btnN = document.createElement('button');
+  btnN.className = 'btn btn-ghost';
+  btnN.style.cssText = 'font-size:12px;padding:7px 14px';
+  btnN.textContent = 'Nueva sesión';
+  btnN.onclick = function(){
+    supabase.from('sessions').delete().eq('user_id', currentUserId).then(function(){ rb.remove(); });
+  };
+
+  row.appendChild(btnR);
+  row.appendChild(btnN);
+  rb.appendChild(row);
+  step1.insertBefore(rb, step1.querySelector('.btn-row'));
 }
 
 function restoreAndLaunch(editorCode){
@@ -426,10 +546,15 @@ function restoreAndLaunch(editorCode){
   updateEditor();
 }
 
-// Handle redirect back from magic link
+// Handle redirect back from magic link click
 supabase.auth.onAuthStateChange(function(event, session){
   if(event === 'SIGNED_IN' && session){
-    proceedAfterLogin(session);
+    currentUserId = session.user.id;
+    // Remove login banner if present
+    var b = document.getElementById('loginBanner');
+    if(b) b.remove();
+    // Refresh page so checkAuthAndRestore runs clean
+    location.reload();
   }
 });
 
@@ -456,73 +581,25 @@ var G = {
   'ANSI':       'Códigos especiales que cambian el color del texto en la terminal. Ej: \\033[34m = azul.'
 };
 
-// ─── WIZARD STEPS ─────────────────────────────────────
+// ─── WIZARD STEPS ────────────────────────────────────────
+function setPip(n, state){
+  var el = document.getElementById('pip'+n);
+  el.className = 'step-pip ' + state;
+  if(state==='done') el.textContent='✓';
+  else el.textContent=n;
+  if(n<3){var ln=document.getElementById('line'+n);ln.className='step-line'+(state==='done'?' done':'');}
+}
+
+// STEP 1
 var selectedModel = 'anthropic';
 
-function setPip(n, state){
-  for(var i=1;i<=4;i++){
-    var el=document.getElementById('pip'+i);
-    if(!el) continue;
-    el.className='step-pip '+(i<n?'done':i===n?state:'pending');
-    el.textContent = i<n ? '✓' : String(i);
-    if(i<4){var ln=document.getElementById('line'+i);if(ln)ln.className='step-line'+(i<n?' done':'');}
-  }
-}
-
-function goToStep(n){
-  for(var i=1;i<=4;i++){
-    var s=document.getElementById('step'+i);
-    if(s) s.style.display = i===n?'flex':'none';
-  }
-  setPip(n,'active');
-}
-
-// STEP 1 — Magic link
-document.getElementById('btnMagic').onclick = function(){
-  var email=document.getElementById('loginEmail').value.trim();
-  if(!email||!email.includes('@')){document.getElementById('loginEmail').style.borderColor='#d1242f';return;}
-  var btn=this; btn.disabled=true; btn.textContent='Enviando...';
-  var msgDiv=document.getElementById('magicMsg');
-  supabase.auth.signInWithOtp({email:email,options:{emailRedirectTo:window.location.href}})
-  .then(function(r){
-    if(r.error){
-      msgDiv.style.color='#d1242f';
-      msgDiv.textContent='Error: '+r.error.message;
-      msgDiv.style.display='block';
-      btn.disabled=false;btn.textContent='Enviar magic link →';
-    } else {
-      msgDiv.innerHTML='✅ Link enviado a <strong>'+email+'</strong><br>Revisá tu email y hacé click para entrar.';
-      msgDiv.style.display='block';
-      btn.style.display='none';
-    }
-  });
-};
-
-document.getElementById('loginEmail').addEventListener('keydown',function(e){
-  if(e.key==='Enter') document.getElementById('btnMagic').click();
-});
-
-document.getElementById('skipLogin').onclick=function(e){
-  e.preventDefault();
-  supabase.auth.getSession().then(function(r){
-    if(r.data&&r.data.session){
-      currentUserId=r.data.session.user.id;
-      proceedAfterLogin(r.data.session);
-    } else {
-      currentUserId='guest_'+Math.random().toString(36).substr(2,9);
-      goToStep(2);
-    }
-  });
-};
-
-// STEP 2 — Model + API key
 function selectModel(m){
-  selectedModel=m;
-  document.getElementById('mc-anthropic').classList.toggle('sel',m==='anthropic');
-  document.getElementById('mc-gemma').classList.toggle('sel',m==='gemma');
-  var inp=document.getElementById('apiKey');
-  var lbl=document.getElementById('keyLabel');
-  var hlp=document.getElementById('keyHelper');
+  selectedModel = m;
+  document.getElementById('mc-anthropic').classList.toggle('sel', m==='anthropic');
+  document.getElementById('mc-gemma').classList.toggle('sel', m==='gemma');
+  var inp = document.getElementById('apiKey');
+  var lbl = document.getElementById('keyLabel');
+  var hlp = document.getElementById('keyHelper');
   if(m==='anthropic'){
     lbl.textContent='API Key de Anthropic';
     inp.placeholder='sk-ant-api03-...';
@@ -534,73 +611,93 @@ function selectModel(m){
   }
 }
 
-document.getElementById('btn2back').onclick=function(){ goToStep(1); };
-document.getElementById('btn2').onclick=function(){
-  var k=document.getElementById('apiKey').value.trim();
-  if(!k){alert('Ingresá tu API key.');return;}
-  if(selectedModel==='anthropic'&&!k.startsWith('sk-')){alert('La key de Anthropic debe empezar con "sk-".');return;}
-  if(selectedModel==='gemma'&&!k.startsWith('AIza')){alert('La key de Google debe empezar con "AIza".');return;}
-  API_KEY=k;
-  // Save api_key to Supabase
-  if(currentUserId&&!currentUserId.startsWith('guest_')){
-    supabase.from('sessions').upsert({user_id:currentUserId,api_key:k,modelo:selectedModel},{onConflict:'user_id'});
-  }
-  goToStep(3);
+document.getElementById('btn1').onclick = function(){
+  var k = document.getElementById('apiKey').value.trim();
+  if(!k){ alert('Ingresá tu API key.'); return; }
+  if(selectedModel==='anthropic' && !k.startsWith('sk-')){ alert('La key de Anthropic debe empezar con "sk-".'); return; }
+  if(selectedModel==='gemma' && !k.startsWith('AIza')){ alert('La key de Google debe empezar con "AIza".'); return; }
+  API_KEY = k;
+  setPip(1,'done'); setPip(2,'active');
+  document.getElementById('step1').style.display='none';
+  document.getElementById('step2').style.display='flex';
 };
+document.getElementById('apiKey').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btn1').click();});
 
-// STEP 3 — Code
-var codeInput=document.getElementById('codeInput');
-var btn3=document.getElementById('btn3');
-function checkCodeReady(){btn3.disabled=codeInput.value.trim().length<20;}
-codeInput.addEventListener('input',checkCodeReady);
+// STEP 2 — file + paste
+var dropZone = document.getElementById('dropZone');
+var fileInput = document.getElementById('fileInput');
+var codeInput = document.getElementById('codeInput');
+var btn2      = document.getElementById('btn2');
 
-var dz0=document.getElementById('dropZone0');
-dz0.addEventListener('click',function(){document.getElementById('fileInputHidden').click();});
-dz0.addEventListener('dragover',function(e){e.preventDefault();dz0.classList.add('over');});
-dz0.addEventListener('dragleave',function(){dz0.classList.remove('over');});
-dz0.addEventListener('drop',function(e){
-  e.preventDefault();dz0.classList.remove('over');
-  if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0]);
+function checkCodeReady(){
+  btn2.disabled = codeInput.value.trim().length < 20;
+}
+codeInput.addEventListener('input', checkCodeReady);
+
+dropZone.addEventListener('click', function(){ fileInput.click(); });
+dropZone.addEventListener('dragover',function(e){e.preventDefault();dropZone.classList.add('over');});
+dropZone.addEventListener('dragleave',function(){dropZone.classList.remove('over');});
+dropZone.addEventListener('drop',function(e){
+  e.preventDefault(); dropZone.classList.remove('over');
+  var f = e.dataTransfer.files[0];
+  if(f) readFile(f);
 });
-document.getElementById('fileInputHidden').addEventListener('change',function(){
-  if(this.files[0])readFile(this.files[0]);
-});
+fileInput.addEventListener('change',function(){if(this.files[0])readFile(this.files[0]);});
 
 function readFile(f){
   var r=new FileReader();
-  r.onload=function(e){codeInput.value=e.target.result;checkCodeReady();};
+  r.onload=function(e){
+    codeInput.value=e.target.result;
+    dropZone.classList.add('loaded');
+    dropZone.querySelector('.drop-title').textContent='✅ '+f.name+' cargado';
+    dropZone.querySelector('.drop-sub').textContent='El código aparece abajo';
+    dropZone.style.pointerEvents='none';
+    checkCodeReady();
+  };
   r.readAsText(f);
 }
 
-document.getElementById('btn3back').onclick=function(){goToStep(2);};
-document.getElementById('btn3').onclick=function(){
+document.getElementById('btn2back').onclick=function(){
+  setPip(1,'active');setPip(2,'pending');
+  document.getElementById('step2').style.display='none';
+  document.getElementById('step1').style.display='flex';
+};
+
+document.getElementById('btn2').onclick=function(){
   userCode=codeInput.value.trim();
-  goToStep(4);
+  setPip(2,'done');setPip(3,'active');
+  document.getElementById('step2').style.display='none';
+  document.getElementById('step3').style.display='flex';
   analyzeCode();
 };
 
-// STEP 4 — Analysis + level
+// STEP 3 — analysis
 function analyzeCode(){
   var box=document.getElementById('analysisBox');
   box.textContent='Analizando tu código...';
-  var prompt='Analizá este código Python en exactamente 4-6 líneas cortas. Lista los bloques principales que tiene (imports, constantes, funciones de archivo, validaciones, matriz, ranking, juego, etc.) y una frase muy breve de para qué sirve cada uno. Usá emojis para cada ítem. No escribas nada más.
-
-CÓDIGO:
-'+userCode;
+  var prompt='Analizá este código Python en exactamente 4-6 líneas cortas. Lista los bloques principales que tiene (imports, constantes, funciones de archivo, validaciones, matriz, ranking, juego, etc.) y una frase muy breve de para qué sirve cada uno. Usá emojis para cada ítem. No escribas nada más.\n\nCÓDIGO:\n'+userCode;
   if(selectedModel==='gemma'){
     fetch('https://generativelanguage.googleapis.com/v1beta/models/gemma-4-27b-it:generateContent?key='+API_KEY,{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:300}})
-    }).then(function(r){return r.json();})
-    .then(function(d){var txt='';try{txt=d.candidates[0].content.parts[0].text;}catch(e){txt='No se pudo analizar.';}box.textContent=txt;})
+    })
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var txt='';try{txt=d.candidates[0].content.parts[0].text;}catch(e){txt='No se pudo analizar.';}
+      box.textContent=txt;
+    })
     .catch(function(){box.textContent='No se pudo conectar. Igual podés continuar.';});
   } else {
     fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:'claude-opus-4-6',max_tokens:300,messages:[{role:'user',content:prompt}]})
-    }).then(function(r){return r.json();})
-    .then(function(d){var txt=((d.content||[]).find(function(b){return b.type==='text';})||{}).text||'No se pudo analizar.';box.textContent=txt;})
+    })
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var txt=((d.content||[]).find(function(b){return b.type==='text';})||{}).text||'No se pudo analizar.';
+      box.textContent=txt;
+    })
     .catch(function(){box.textContent='No se pudo conectar. Igual podés continuar.';});
   }
 }
@@ -611,8 +708,15 @@ function pickLevel(el){
   nivel=el.dataset.level;
 }
 
-document.getElementById('btn4back').onclick=function(){goToStep(3);};
-document.getElementById('btn4').onclick=function(){launchApp();};
+document.getElementById('btn3back').onclick=function(){
+  setPip(2,'active');setPip(3,'pending');
+  document.getElementById('step3').style.display='none';
+  document.getElementById('step2').style.display='flex';
+};
+
+document.getElementById('btn3').onclick=function(){
+  launchApp();
+};
 
 // ─── LAUNCH APP ──────────────────────────────────────────
 function launchApp(){
