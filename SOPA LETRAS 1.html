@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="initSupabase();checkAuthAndRestore();" onerror="alert('No se pudo cargar Supabase. Revisá tu conexión.')"></script>
 <title>Tutor IA — Python</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -398,7 +398,6 @@ function clearSession(){
 }
 
 // ─── SUPABASE MAGIC LINK AUTH + SESSION RESTORE ─────────
-initSupabase();
 
 
 async function checkAuthAndRestore(){
@@ -433,7 +432,6 @@ supabase.auth.onAuthStateChange(function(event, session){
   }
 });
 
-checkAuthAndRestore();
 
 // ─── GLOSSARY ────────────────────────────────────────────
 var G = {
