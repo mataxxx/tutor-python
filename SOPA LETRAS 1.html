@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Tutor IA — Python</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ════════════════════════════════
+   SETUP WIZARD  (steps 1-3)
+════════════════════════════════ */
+#wizard{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:560px;display:flex;flex-direction:column;overflow:hidden}
+
+/* step header */
+.step-bar{display:flex;padding:20px 24px 0;gap:8px;align-items:center}
+.step-pip{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .3s}
+.step-pip.done{background:#238636;color:#fff}
+.step-pip.active{background:#1f6feb;color:#fff}
+.step-pip.pending{background:#21262d;color:#6e7681;border:1px solid #30363d}
+.step-line{flex:1;height:2px;border-radius:2px;background:#21262d}
+.step-line.done{background:#238636}
+
+.step-body{padding:28px 24px 24px;display:flex;flex-direction:column;gap:18px}
+.step-title{font-size:17px;font-weight:600;color:#e6edf3}
+.step-sub{font-size:13px;color:#8b949e;line-height:1.6}
+
+/* step 1 — API key */
+.field-lbl{font-size:12px;color:#8b949e;margin-bottom:5px}
+.field-inp{width:100%;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:13px;font-family:'SF Mono',monospace;outline:none}
+.field-inp:focus{border-color:#58a6ff;box-shadow:0 0 0 3px rgba(88,166,255,.15)}
+.helper{font-size:11px;color:#6e7681}
+.helper a{color:#58a6ff;text-decoration:none}
+.model-card{border:1.5px solid #30363d;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;background:#0d1117;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+.model-card:hover{border-color:#58a6ff}
+.model-card.sel{border-color:#1f6feb;background:rgba(31,111,235,.1)}
+
+/* step 2 — code upload */
+.drop-zone{border:2px dashed #30363d;border-radius:10px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#0d1117;display:flex;flex-direction:column;align-items:center;gap:8px}
+.drop-zone:hover,.drop-zone.over{border-color:#1f6feb;background:rgba(31,111,235,.06)}
+.drop-zone.loaded{border-color:#238636;background:rgba(35,134,54,.06);cursor:default}
+.drop-icon{font-size:28px}
+.drop-title{font-size:14px;font-weight:500;color:#e6edf3}
+.drop-sub{font-size:12px;color:#6e7681}
+.paste-area-wrap{position:relative}
+.paste-area{width:100%;height:140px;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:10px 12px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#e6edf3;resize:none;outline:none;line-height:1.6}
+.paste-area:focus{border-color:#58a6ff}
+.paste-area::placeholder{color:#484f58}
+.or-divider{display:flex;align-items:center;gap:10px;color:#484f58;font-size:12px}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:#21262d}
+
+/* analysis box */
+.analysis-box{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:14px;font-size:12px;color:#8b949e;line-height:1.7;max-height:160px;overflow-y:auto;font-family:inherit}
+.analysis-box .tag{display:inline-block;background:#1f3a5f;color:#79c0ff;font-size:10px;padding:2px 7px;border-radius:20px;margin:2px 2px 2px 0}
+
+/* step 3 — level */
+.level-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.level-card{border:1.5px solid #30363d;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;background:#0d1117;text-align:center}
+.level-card:hover{border-color:#58a6ff}
+.level-card.sel{border-color:#1f6feb;background:rgba(31,111,235,.1)}
+.level-card .lc-icon{font-size:22px;margin-bottom:6px}
+.level-card .lc-name{font-size:13px;font-weight:600;color:#e6edf3;margin-bottom:4px}
+.level-card .lc-desc{font-size:11px;color:#6e7681;line-height:1.4}
+
+/* buttons */
+.btn-row{display:flex;gap:8px;justify-content:flex-end}
+.btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-primary{background:#1f6feb;color:#fff}
+.btn-primary:hover{background:#388bfd}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-success{background:#238636;color:#fff}
+.btn-success:hover{background:#2ea043}
+.btn-ghost{background:transparent;color:#8b949e;border:1px solid #30363d}
+.btn-ghost:hover{color:#e6edf3;border-color:#8b949e}
+
+/* ════════════════════════════════
+   MAIN APP
+════════════════════════════════ */
+#app{display:none;flex:1;flex-direction:column;overflow:hidden}
+
+.topbar{background:#161b22;border-bottom:1px solid #30363d;padding:7px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tb-title{font-size:13px;font-weight:600}
+.tb-sub{font-size:11px;color:#6e7681}
+.tb-lvl{margin-left:auto;background:#21262d;border:1px solid #30363d;border-radius:20px;padding:3px 10px;font-size:11px;color:#8b949e}
+
+.panels{flex:1;display:flex;overflow:hidden}
+.panel{display:flex;flex-direction:column;overflow:hidden}
+.p-ref{background:#0d1117;min-width:100px}
+.p-chat{background:#fff;min-width:180px}
+.p-editor{background:#0d1117;min-width:140px}
+.resizer{width:5px;background:#21262d;cursor:col-resize;flex-shrink:0;transition:background .15s}
+.resizer:hover,.resizer.active{background:#1f6feb}
+
+/* panel headers */
+.phdr{padding:7px 12px;display:flex;align-items:center;gap:6px;flex-shrink:0;border-bottom:1px solid #30363d;background:#161b22}
+.phdr-l{padding:7px 12px;display:flex;align-items:center;gap:7px;flex-shrink:0;border-bottom:1px solid #e1e4e8;background:#f6f8fa}
+.dots{display:flex;gap:4px}
+.dot{width:8px;height:8px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#ffbd2e}.dg{background:#28c840}
+.plbl{font-size:11px;color:#6e7681;font-family:monospace;margin-left:3px}
+.ticon{width:22px;height:22px;border-radius:50%;background:#ddf4ff;color:#0969da;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.plbl-l{font-size:12px;font-weight:600;color:#24292f}
+
+/* reference */
+.ref-scroll{flex:1;overflow-y:auto;padding:10px}
+.ref-scroll pre{font-family:'SF Mono','Fira Code',monospace;font-size:10px;line-height:1.8;color:#8b949e;white-space:pre-wrap;word-break:break-word}
+
+/* chat */
+.msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;background:#fff}
+.msg{max-width:95%;font-size:12px;line-height:1.65;padding:9px 12px;border-radius:10px;word-break:break-word;user-select:text}
+.msg.t{background:#f6f8fa;color:#24292f;align-self:flex-start;border-top-left-radius:3px;border:1px solid #e1e4e8;white-space:pre-wrap}
+.msg.u{background:#ddf4ff;color:#0969da;align-self:flex-end;border-top-right-radius:3px;white-space:pre-wrap}
+.msg.ld{background:#f6f8fa;color:#8c959f;align-self:flex-start;font-style:italic;font-size:11px;border:1px solid #e1e4e8}
+.msg.err{background:#ffebe9;color:#d1242f;align-self:flex-start;font-size:11px;border:1px solid #ffcecb;white-space:pre-wrap}
+.msg-code{background:#0d1117;color:#e6edf3;font-family:'SF Mono','Fira Code',monospace;font-size:11.5px;padding:10px 12px;border-radius:6px;margin:4px 0;white-space:pre;overflow-x:auto;border:1px solid #30363d;position:relative;user-select:text;align-self:flex-start;max-width:95%}
+.cp-btn{position:absolute;top:5px;right:6px;font-size:10px;padding:2px 8px;border-radius:4px;background:#30363d;color:#8b949e;border:none;cursor:pointer;font-family:inherit}
+.cp-btn:hover{background:#58a6ff;color:#fff}
+.term{border-bottom:1.5px dotted #0969da;color:#0969da;cursor:help;position:relative;display:inline}
+.ttp{display:none;position:absolute;bottom:calc(100% + 5px);left:0;background:#24292f;color:#e6edf3;font-size:11px;line-height:1.5;padding:8px 10px;border-radius:6px;width:200px;z-index:300;white-space:normal;box-shadow:0 4px 14px rgba(0,0,0,.4);pointer-events:none;border:1px solid #444}
+.term:hover .ttp{display:block}
+
+.chat-foot{flex-shrink:0;border-top:1px solid #e1e4e8;background:#fff;display:flex;flex-direction:column}
+.chat-inp{padding:8px 10px;display:flex;gap:6px}
+.chat-inp textarea{flex:1;height:56px;resize:none;border:1px solid #d0d7de;border-radius:8px;padding:7px 9px;font-size:12px;font-family:inherit;color:#24292f;background:#fff;line-height:1.5;outline:none;user-select:text}
+.chat-inp textarea:focus{border-color:#0969da;box-shadow:0 0 0 3px rgba(9,105,218,.1)}
+.chat-inp button{padding:0 13px;background:#2da44e;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;flex-shrink:0}
+.chat-inp button:disabled{opacity:.4;cursor:not-allowed}
+
+/* editor */
+.ed-wrap{flex:1;display:flex;overflow:hidden;position:relative}
+/* The editor uses the overlay technique:
+   - ed-hl  (pre, behind) renders colorized HTML
+   - ed-ta  (textarea, on top) is transparent so user types on it
+   Both share identical font/size/padding so they align perfectly */
+.ed-container{flex:1;position:relative;overflow:auto;display:flex}
+.ed-gutter{width:42px;background:#161b22;border-right:1px solid #21262d;flex-shrink:0;overflow:hidden;position:relative;z-index:3}
+.ed-gutter-inner{font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;text-align:right;padding:14px 6px 14px 0;color:#4d5566;white-space:pre;overflow:hidden;height:100%}
+.ed-code-wrap{flex:1;position:relative;overflow:hidden}
+.ed-hl{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;padding:14px 12px;white-space:pre;word-break:normal;overflow-wrap:normal;pointer-events:none;z-index:1;overflow:hidden;margin:0}
+.ed-ta{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;padding:14px 12px;border:none;outline:none;resize:none;background:transparent;color:#0d1117;caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;z-index:2;user-select:text;-webkit-user-select:text}
+.ed-ta::placeholder{color:#3d444d}
+.hint-overlay{position:absolute;bottom:8px;left:6px;right:6px;background:rgba(13,17,23,.92);border:1px solid #1f6feb;border-radius:8px;padding:8px 12px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#79c0ff;white-space:pre;z-index:15;pointer-events:none;display:none;backdrop-filter:blur(4px);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.hint-label{font-size:10px;color:#58a6ff;margin-bottom:4px;font-family:sans-serif;font-weight:600;letter-spacing:.03em}
+.ed-foot{padding:6px 12px;border-top:1px solid #30363d;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#161b22}
+.ed-foot-hint{font-size:10px;color:#3d444d;font-family:monospace}
+.rev-btn{font-size:11px;padding:4px 12px;border-radius:6px;background:#238636;color:#fff;border:none;cursor:pointer;font-family:inherit;font-weight:500}
+.rev-btn:hover{background:#2ea043}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#30363d;border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     WIZARD
+══════════════════════════════════ -->
+<div id="wizard">
+  <div class="card">
+
+    <!-- step bar -->
+    <div class="step-bar">
+      <div class="step-pip active" id="pip1">1</div>
+      <div class="step-line" id="line1"></div>
+      <div class="step-pip pending" id="pip2">2</div>
+      <div class="step-line" id="line2"></div>
+      <div class="step-pip pending" id="pip3">3</div>
+    </div>
+
+    <!-- STEP 1: MODEL + API KEY -->
+    <div class="step-body" id="step1">
+      <div class="step-title">Elegí tu IA</div>
+      <div class="step-sub">Seleccioná el modelo que querés usar como tutor. Tu key solo vive en esta pestaña.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="model-card sel" id="mc-anthropic" onclick="selectModel('anthropic')">
+          <div style="font-size:22px">🤖</div>
+          <div style="font-size:13px;font-weight:600;color:#e6edf3;margin:4px 0">Claude</div>
+          <div style="font-size:11px;color:#6e7681;line-height:1.4">Anthropic · claude-opus-4-6<br>Muy bueno para enseñar</div>
+        </div>
+        <div class="model-card" id="mc-gemma" onclick="selectModel('gemma')">
+          <div style="font-size:22px">✨</div>
+          <div style="font-size:13px;font-weight:600;color:#e6edf3;margin:4px 0">Gemma 4</div>
+          <div style="font-size:11px;color:#6e7681;line-height:1.4">Google · gemma-4-27b-it<br>Open source, gratis en AI Studio</div>
+        </div>
+      </div>
+      <div>
+        <div class="field-lbl" id="keyLabel">API Key de Anthropic</div>
+        <input class="field-inp" type="password" id="apiKey" placeholder="sk-ant-api03-...">
+      </div>
+      <div class="helper" id="keyHelper">¿No tenés? → <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com/keys</a></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn1">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: CODE UPLOAD -->
+    <div class="step-body" id="step2" style="display:none">
+      <div class="step-title">Subí tu código Python</div>
+      <div class="step-sub">El tutor lo va a analizar y armar un plan personalizado para que lo entiendas de verdad.</div>
+
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-icon">📂</div>
+        <div class="drop-title">Arrastrá tu .py acá</div>
+        <div class="drop-sub">o hacé clic para seleccionar el archivo</div>
+      </div>
+      <input type="file" id="fileInput" accept=".py,.txt" style="display:none">
+
+      <div class="or-divider">o pegá el código directamente</div>
+
+      <div class="paste-area-wrap">
+        <textarea class="paste-area" id="codeInput" placeholder="# Pegá tu código Python acá..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" id="btn2back">← Atrás</button>
+        <button class="btn btn-primary" id="btn2" disabled>Analizar código →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: ANALYSIS + LEVEL -->
+    <div class="step-body" id="step3" style="display:none">
+      <div class="step-title">Análisis listo ✅</div>
+      <div class="step-sub">Esto es lo que encontré en tu código:</div>
+      <div class="analysis-box" id="analysisBox">Analizando...</div>
+
+      <div style="font-size:13px;font-weight:500;color:#e6edf3">¿Cuál es tu nivel en Python?</div>
+      <div class="level-cards">
+        <div class="level-card sel" data-level="principiante" onclick="pickLevel(this)">
+          <div class="lc-icon">🌱</div>
+          <div class="lc-name">Principiante</div>
+          <div class="lc-desc">Primera vez programando o recién empezando</div>
+        </div>
+        <div class="level-card" data-level="intermedio" onclick="pickLevel(this)">
+          <div class="lc-icon">⚡</div>
+          <div class="lc-name">Intermedio</div>
+          <div class="lc-desc">Conozco lo básico, quiero entender más a fondo</div>
+        </div>
+        <div class="level-card" data-level="avanzado" onclick="pickLevel(this)">
+          <div class="lc-icon">🔥</div>
+          <div class="lc-name">Avanzado</div>
+          <div class="lc-desc">Entiendo Python, quiero ver el diseño del programa</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" id="btn3back">← Atrás</button>
+        <button class="btn btn-success" id="btn3">¡Empezar sesión! →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     APP
+══════════════════════════════════ -->
+<div id="app">
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="tbTitle">Tutor IA</div>
+      <div class="tb-sub">Reconstruí tu código desde cero, guiado paso a paso</div>
+    </div>
+    <div class="tb-lvl" id="tbLvl">Principiante</div>
+    <span id="saveIndicator" style="font-size:11px;color:#3fb950;margin-left:8px;min-width:80px"></span>
+    <button id="newSessBtn" style="padding:3px 10px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">Nueva sesión</button>
+  </div>
+
+  <div class="panels">
+    <!-- REFERENCE -->
+    <div class="panel p-ref" id="panRef" style="width:220px;flex:none">
+      <div class="phdr">
+        <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+        <span class="plbl">referencia.py</span>
+      </div>
+      <div class="ref-scroll"><pre id="refPre"></pre></div>
+    </div>
+
+    <div class="resizer" id="res1"></div>
+
+    <!-- CHAT -->
+    <div class="panel p-chat" id="panChat" style="flex:1">
+      <div class="phdr-l">
+        <div class="ticon">T</div>
+        <span class="plbl-l">Tutor IA</span>
+      </div>
+      <div class="msgs" id="msgs"></div>
+      <div class="chat-foot">
+        <div class="chat-inp">
+          <textarea id="userTxt" placeholder="Respondé al tutor acá..."></textarea>
+          <button id="sendBtn">↑</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="resizer" id="res2"></div>
+
+    <!-- EDITOR -->
+    <div class="panel p-editor" id="panEditor" style="flex:1">
+      <div class="phdr">
+        <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+        <span class="plbl">mi_codigo.py</span>
+      </div>
+      <div class="ed-wrap">
+        <div class="ed-gutter"><div class="ed-gutter-inner" id="edGutter"></div></div>
+        <div class="ed-container" id="edContainer">
+          <div class="ed-code-wrap">
+            <pre class="ed-hl" id="edHL" aria-hidden="true"></pre>
+            <textarea class="ed-ta" id="myCode" spellcheck="false" autocomplete="off" placeholder="# Escribí tu código acá..."></textarea>
+            <div class="hint-overlay" id="hintOverlay">
+              <div class="hint-label">✏️ Escribí esto:</div>
+              <span id="hintCode"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ed-foot">
+        <span class="ed-foot-hint">① Tutor explica → ② Escribís → ③ Revisar</span>
+        <button class="rev-btn" id="revBtn">Revisar con tutor ↗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────
+var API_KEY = '';
+var nivel   = 'principiante';
+var userCode= '';
+var hist    = [];
+var busy    = false;
+
+// ─── SUPABASE ────────────────────────────────────────────
+var SUPA_URL = "https://rucvyqagsancjkzsfpgg.supabase.co";
+var SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1Y3Z5cWFnc2FuY2prenNmcGdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMzUxNTMsImV4cCI6MjA5MjgxMTE1M30.aBA0_f7UF0QpVirs8hGRVvMLhOR0s4ur8nteUAhFjOA";
+var supabase = null;
+var currentUserId = null;
+var saveTimer = null;
+
+function initSupabase(){
+  supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+}
+
+function fmtDate(iso){
+  var d=new Date(iso);
+  return d.toLocaleDateString('es',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+}
+
+// Debounced save — saves 2s after last change to avoid hammering DB
+function saveSession(){
+  if(!supabase||!currentUserId) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    var editorCode='';
+    try{ editorCode=document.getElementById('myCode').value||''; }catch(e){}
+    supabase.from('sessions').upsert({
+      user_id: currentUserId,
+      nivel: nivel,
+      modelo: selectedModel,
+      user_code: userCode,
+      editor_code: editorCode,
+      hist: hist,
+      updated_at: new Date().toISOString()
+    },{onConflict:'user_id'}).then(function(r){
+      if(r.error) console.warn('Save error:',r.error.message);
+      else updateSaveIndicator('✓ guardado');
+    });
+  }, 2000);
+}
+
+function updateSaveIndicator(msg){
+  var el=document.getElementById('saveIndicator');
+  if(el){ el.textContent=msg; setTimeout(function(){el.textContent='';},3000); }
+}
+
+async function loadSessionFromDB(userId){
+  if(!supabase) return null;
+  var r = await supabase.from('sessions').select('*').eq('user_id',userId).single();
+  if(r.error||!r.data) return null;
+  return r.data;
+}
+
+function clearSession(){
+  if(!supabase||!currentUserId) return;
+  supabase.from('sessions').delete().eq('user_id',currentUserId);
+  currentUserId=null;
+  hist=[];
+}
+
+// ─── SUPABASE MAGIC LINK AUTH + SESSION RESTORE ─────────
+initSupabase();
+
+function showLoginUI(){
+  if(document.getElementById('loginBanner')) return;
+  var banner = document.createElement('div');
+  banner.id = 'loginBanner';
+  banner.style.cssText = 'background:#0d1f38;border:1px solid #1f6feb;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px';
+  banner.innerHTML =
+    '<div style="font-size:14px;font-weight:600;color:#e6edf3">☁️ Guardá tu progreso en la nube</div>' +
+    '<div style="font-size:12px;color:#8b949e;line-height:1.5">Ingresá tu email — te mandamos un link para entrar. Sin contraseña.</div>';
+
+  var emailRow = document.createElement('div');
+  emailRow.style.cssText = 'display:flex;gap:8px';
+  var emailInp = document.createElement('input');
+  emailInp.type = 'email';
+  emailInp.placeholder = 'tu@email.com';
+  emailInp.style.cssText = 'flex:1;padding:8px 10px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#e6edf3;font-size:12px;outline:none;font-family:inherit';
+  emailInp.onfocus = function(){ this.style.borderColor='#58a6ff'; };
+  emailInp.onblur  = function(){ this.style.borderColor='#30363d'; };
+
+  var sendBtn = document.createElement('button');
+  sendBtn.className = 'btn btn-primary';
+  sendBtn.style.cssText = 'font-size:12px;padding:8px 14px;white-space:nowrap';
+  sendBtn.textContent = 'Enviar link →';
+
+  var msgDiv = document.createElement('div');
+  msgDiv.style.cssText = 'font-size:12px;color:#3fb950;display:none;text-align:center;line-height:1.5';
+
+  sendBtn.onclick = function(){
+    var email = emailInp.value.trim();
+    if(!email || !email.includes('@')){ emailInp.style.borderColor='#d1242f'; return; }
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Enviando...';
+    supabase.auth.signInWithOtp({
+      email: email,
+      options: { emailRedirectTo: window.location.href }
+    }).then(function(r){
+      if(r.error){
+        msgDiv.style.color='#d1242f';
+        msgDiv.textContent = 'Error: ' + r.error.message;
+        msgDiv.style.display='block';
+        sendBtn.disabled=false;
+        sendBtn.textContent='Enviar link →';
+      } else {
+        emailRow.style.display='none';
+        msgDiv.style.color='#3fb950';
+        msgDiv.innerHTML = '✅ Link enviado a <strong>'+email+'</strong><br>Revisá tu email y hacé click en el link para entrar.';
+        msgDiv.style.display='block';
+      }
+    });
+  };
+
+  emailInp.addEventListener('keydown', function(e){ if(e.key==='Enter') sendBtn.click(); });
+
+  emailRow.appendChild(emailInp);
+  emailRow.appendChild(sendBtn);
+  banner.appendChild(emailRow);
+  banner.appendChild(msgDiv);
+
+  var skipBtn = document.createElement('button');
+  skipBtn.className = 'btn btn-ghost';
+  skipBtn.style.cssText = 'font-size:11px;align-self:center';
+  skipBtn.textContent = 'Continuar sin login (solo este dispositivo)';
+  skipBtn.onclick = function(){
+    currentUserId = 'guest_' + Math.random().toString(36).substr(2,9);
+    banner.remove();
+  };
+  banner.appendChild(skipBtn);
+
+  var step1 = document.getElementById('step1');
+  step1.insertBefore(banner, step1.querySelector('.btn-row'));
+}
+
+async function checkAuthAndRestore(){
+  var r = await supabase.auth.getSession();
+  var sess = r.data && r.data.session;
+
+  if(!sess){ showLoginUI(); return; }
+
+  var user = sess.user;
+  currentUserId = user.id;
+
+  // Show logged-in badge in wizard
+  var badge = document.createElement('div');
+  badge.style.cssText = 'background:#0d2f1a;border:1px solid #238636;border-radius:8px;padding:8px 12px;font-size:12px;color:#3fb950;display:flex;align-items:center;justify-content:space-between;gap:8px';
+  badge.innerHTML = '<span>✅ <strong>' + user.email + '</strong></span>';
+  var logoutBtn = document.createElement('button');
+  logoutBtn.className = 'btn btn-ghost';
+  logoutBtn.style.cssText = 'font-size:11px;padding:2px 8px';
+  logoutBtn.textContent = 'Salir';
+  logoutBtn.onclick = function(){ supabase.auth.signOut().then(function(){ location.reload(); }); };
+  badge.appendChild(logoutBtn);
+  var step1 = document.getElementById('step1');
+  step1.insertBefore(badge, step1.querySelector('.btn-row'));
+
+  // Try to restore saved session from Supabase
+  var saved = await loadSessionFromDB(currentUserId);
+  if(!saved || !saved.hist || saved.hist.length === 0) return;
+
+  var rb = document.createElement('div');
+  rb.style.cssText = 'background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px';
+  rb.innerHTML =
+    '<div style="font-size:13px;font-weight:600;color:#e6edf3">📖 Sesión guardada encontrada</div>' +
+    '<div style="font-size:11px;color:#8b949e">Guardada el ' + fmtDate(saved.updated_at) + ' · ' + saved.hist.length + ' mensajes</div>';
+
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px';
+
+  var btnR = document.createElement('button');
+  btnR.className = 'btn btn-success';
+  btnR.style.cssText = 'font-size:12px;padding:7px 14px;flex:1';
+  btnR.textContent = 'Continuar sesión →';
+  btnR.onclick = function(){
+    var key = document.getElementById('apiKey').value.trim();
+    if(!key){ alert('Ingresá tu API key primero.'); return; }
+    API_KEY = key;
+    nivel    = saved.nivel    || 'principiante';
+    userCode = saved.user_code|| '';
+    hist     = saved.hist     || [];
+    if(saved.modelo) selectedModel = saved.modelo;
+    restoreAndLaunch(saved.editor_code || '');
+  };
+
+  var btnN = document.createElement('button');
+  btnN.className = 'btn btn-ghost';
+  btnN.style.cssText = 'font-size:12px;padding:7px 14px';
+  btnN.textContent = 'Nueva sesión';
+  btnN.onclick = function(){
+    supabase.from('sessions').delete().eq('user_id', currentUserId).then(function(){ rb.remove(); });
+  };
+
+  row.appendChild(btnR);
+  row.appendChild(btnN);
+  rb.appendChild(row);
+  step1.insertBefore(rb, step1.querySelector('.btn-row'));
+}
+
+function restoreAndLaunch(editorCode){
+  document.getElementById('wizard').style.display = 'none';
+  document.getElementById('app').style.display    = 'flex';
+  document.getElementById('refPre').textContent   = userCode;
+  var lvlLabels = {principiante:'🌱 Principiante', intermedio:'⚡ Intermedio', avanzado:'🔥 Avanzado'};
+  document.getElementById('tbLvl').textContent  = lvlLabels[nivel] || nivel;
+  document.getElementById('tbLvl').style.borderLeft = selectedModel==='gemma' ? '3px solid #4285f4' : '3px solid #1f6feb';
+  if(editorCode){ document.getElementById('myCode').value = editorCode; }
+  hist.forEach(function(m){ addMsg(m.role==='user'?'u':'t', m.content); });
+  var wb = document.createElement('div');
+  wb.style.cssText = 'text-align:center;font-size:11px;color:#8c959f;padding:6px;border-top:1px dashed #e1e4e8;margin-top:4px';
+  wb.textContent = '↩️ Sesión restaurada';
+  document.getElementById('msgs').appendChild(wb);
+  document.getElementById('msgs').scrollTop = 99999;
+  document.getElementById('userTxt').focus();
+  updateEditor();
+}
+
+// Handle redirect back from magic link click
+supabase.auth.onAuthStateChange(function(event, session){
+  if(event === 'SIGNED_IN' && session){
+    currentUserId = session.user.id;
+    // Remove login banner if present
+    var b = document.getElementById('loginBanner');
+    if(b) b.remove();
+    // Refresh page so checkAuthAndRestore runs clean
+    location.reload();
+  }
+});
+
+checkAuthAndRestore();
+
+// ─── GLOSSARY ────────────────────────────────────────────
+var G = {
+  'librería':   'Código ya escrito por alguien más que podés reutilizar. Python incluye cientos.',
+  'módulo':     'Otro nombre para librería. Archivo .py con funciones agrupadas por tema.',
+  'import':     'Le dice a Python qué librerías necesitás. Va siempre al inicio del archivo.',
+  'función':    'Bloque de código con nombre que hace una tarea. Lo definís una vez, lo usás cuando querás.',
+  'constante':  'Valor que no cambia durante el programa. Por convención: MAYÚSCULAS.',
+  'variable':   'Espacio con nombre donde guardás un dato que puede cambiar.',
+  'matriz':     'Lista de listas — como una tabla con filas y columnas.',
+  'lista':      'Colección ordenada: [1, 2, 3]. Se puede modificar.',
+  'string':     'Texto entre comillas: "hola". También llamado str.',
+  'random':     'Librería para valores al azar: números, elecciones, posiciones.',
+  'os':         'Librería para interactuar con el sistema operativo: rutas, carpetas, etc.',
+  'parámetro':  'Valor que le pasás a una función para que trabaje con él.',
+  'return':     'Palabra clave que hace que una función devuelva un resultado.',
+  'loop':       'Ciclo que repite instrucciones. En Python: while o for.',
+  'condicional':'Instrucción if/else: ejecuta código solo si se cumple una condición.',
+  'Bubble Sort':'Algoritmo que ordena comparando pares y swapeando. Simple y efectivo para listas pequeñas.',
+  'ANSI':       'Códigos especiales que cambian el color del texto en la terminal. Ej: \\033[34m = azul.'
+};
+
+// ─── WIZARD STEPS ────────────────────────────────────────
+function setPip(n, state){
+  var el = document.getElementById('pip'+n);
+  el.className = 'step-pip ' + state;
+  if(state==='done') el.textContent='✓';
+  else el.textContent=n;
+  if(n<3){var ln=document.getElementById('line'+n);ln.className='step-line'+(state==='done'?' done':'');}
+}
+
+// STEP 1
+var selectedModel = 'anthropic';
+
+function selectModel(m){
+  selectedModel = m;
+  document.getElementById('mc-anthropic').classList.toggle('sel', m==='anthropic');
+  document.getElementById('mc-gemma').classList.toggle('sel', m==='gemma');
+  var inp = document.getElementById('apiKey');
+  var lbl = document.getElementById('keyLabel');
+  var hlp = document.getElementById('keyHelper');
+  if(m==='anthropic'){
+    lbl.textContent='API Key de Anthropic';
+    inp.placeholder='sk-ant-api03-...';
+    hlp.innerHTML='¿No tenés? → <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com/keys</a>';
+  } else {
+    lbl.textContent='API Key de Google AI Studio';
+    inp.placeholder='AIza...';
+    hlp.innerHTML='¿No tenés? → <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a> (gratis)';
+  }
+}
+
+document.getElementById('btn1').onclick = function(){
+  var k = document.getElementById('apiKey').value.trim();
+  if(!k){ alert('Ingresá tu API key.'); return; }
+  if(selectedModel==='anthropic' && !k.startsWith('sk-')){ alert('La key de Anthropic debe empezar con "sk-".'); return; }
+  if(selectedModel==='gemma' && !k.startsWith('AIza')){ alert('La key de Google debe empezar con "AIza".'); return; }
+  API_KEY = k;
+  setPip(1,'done'); setPip(2,'active');
+  document.getElementById('step1').style.display='none';
+  document.getElementById('step2').style.display='flex';
+};
+document.getElementById('apiKey').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btn1').click();});
+
+// STEP 2 — file + paste
+var dropZone = document.getElementById('dropZone');
+var fileInput = document.getElementById('fileInput');
+var codeInput = document.getElementById('codeInput');
+var btn2      = document.getElementById('btn2');
+
+function checkCodeReady(){
+  btn2.disabled = codeInput.value.trim().length < 20;
+}
+codeInput.addEventListener('input', checkCodeReady);
+
+dropZone.addEventListener('click', function(){ fileInput.click(); });
+dropZone.addEventListener('dragover',function(e){e.preventDefault();dropZone.classList.add('over');});
+dropZone.addEventListener('dragleave',function(){dropZone.classList.remove('over');});
+dropZone.addEventListener('drop',function(e){
+  e.preventDefault(); dropZone.classList.remove('over');
+  var f = e.dataTransfer.files[0];
+  if(f) readFile(f);
+});
+fileInput.addEventListener('change',function(){if(this.files[0])readFile(this.files[0]);});
+
+function readFile(f){
+  var r=new FileReader();
+  r.onload=function(e){
+    codeInput.value=e.target.result;
+    dropZone.classList.add('loaded');
+    dropZone.querySelector('.drop-title').textContent='✅ '+f.name+' cargado';
+    dropZone.querySelector('.drop-sub').textContent='El código aparece abajo';
+    dropZone.style.pointerEvents='none';
+    checkCodeReady();
+  };
+  r.readAsText(f);
+}
+
+document.getElementById('btn2back').onclick=function(){
+  setPip(1,'active');setPip(2,'pending');
+  document.getElementById('step2').style.display='none';
+  document.getElementById('step1').style.display='flex';
+};
+
+document.getElementById('btn2').onclick=function(){
+  userCode=codeInput.value.trim();
+  setPip(2,'done');setPip(3,'active');
+  document.getElementById('step2').style.display='none';
+  document.getElementById('step3').style.display='flex';
+  analyzeCode();
+};
+
+// STEP 3 — analysis
+function analyzeCode(){
+  var box=document.getElementById('analysisBox');
+  box.textContent='Analizando tu código...';
+  var prompt='Analizá este código Python en exactamente 4-6 líneas cortas. Lista los bloques principales que tiene (imports, constantes, funciones de archivo, validaciones, matriz, ranking, juego, etc.) y una frase muy breve de para qué sirve cada uno. Usá emojis para cada ítem. No escribas nada más.\n\nCÓDIGO:\n'+userCode;
+  if(selectedModel==='gemma'){
+    fetch('https://generativelanguage.googleapis.com/v1beta/models/gemma-4-27b-it:generateContent?key='+API_KEY,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:300}})
+    })
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var txt='';try{txt=d.candidates[0].content.parts[0].text;}catch(e){txt='No se pudo analizar.';}
+      box.textContent=txt;
+    })
+    .catch(function(){box.textContent='No se pudo conectar. Igual podés continuar.';});
+  } else {
+    fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-opus-4-6',max_tokens:300,messages:[{role:'user',content:prompt}]})
+    })
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var txt=((d.content||[]).find(function(b){return b.type==='text';})||{}).text||'No se pudo analizar.';
+      box.textContent=txt;
+    })
+    .catch(function(){box.textContent='No se pudo conectar. Igual podés continuar.';});
+  }
+}
+
+function pickLevel(el){
+  document.querySelectorAll('.level-card').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  nivel=el.dataset.level;
+}
+
+document.getElementById('btn3back').onclick=function(){
+  setPip(2,'active');setPip(3,'pending');
+  document.getElementById('step3').style.display='none';
+  document.getElementById('step2').style.display='flex';
+};
+
+document.getElementById('btn3').onclick=function(){
+  launchApp();
+};
+
+// ─── LAUNCH APP ──────────────────────────────────────────
+function launchApp(){
+  // Ensure we have a user ID even for guests
+  if(!currentUserId) currentUserId='guest_'+Math.random().toString(36).substr(2,9);
+  document.getElementById('wizard').style.display='none';
+  document.getElementById('app').style.display='flex';
+
+  // set topbar
+  var lvlLabels={principiante:'🌱 Principiante',intermedio:'⚡ Intermedio',avanzado:'🔥 Avanzado'};
+  document.getElementById('tbLvl').textContent=lvlLabels[nivel];
+  document.getElementById('tbLvl').title = selectedModel==='gemma'?'Gemma 4 (Google)':'Claude (Anthropic)';
+  document.getElementById('tbLvl').style.borderLeft = selectedModel==='gemma'?'3px solid #4285f4':'3px solid #1f6feb';
+  document.getElementById('tbTitle').textContent='Tutor IA — '+document.querySelector('.level-card.sel .lc-name').textContent;
+
+  // show code in reference panel
+  document.getElementById('refPre').textContent=userCode;
+
+  // first tutor message
+  var opening='Analicé tu código. Vamos a reconstruirlo desde cero, línea por línea.\n\nEmpezamos por lo primero que tiene cualquier programa Python: los [import]s.\n\nUn [import] es como pedirle prestada una caja de herramientas a alguien. Python trae miles de "cajas" listas — vos solo avisás cuáles necesitás al inicio del programa. Sin ese aviso, Python no sabe que las querés usar.\n\n¿Eso tiene sentido?';
+  addMsg('t',opening);
+  hist.push({role:'assistant',content:opening});saveSession();
+  document.getElementById('userTxt').focus();
+  updateGutter();
+}
+
+// ─── RESIZABLE PANELS ────────────────────────────────────
+function makeResizer(rid,lid,rightId){
+  var res=document.getElementById(rid),lp=document.getElementById(lid),rp=document.getElementById(rightId);
+  res.addEventListener('mousedown',function(e){
+    e.preventDefault();res.classList.add('active');
+    var sx=e.clientX,slw=lp.getBoundingClientRect().width,srw=rp.getBoundingClientRect().width;
+    function mv(e){var dx=e.clientX-sx,nl=slw+dx,nr=srw-dx;if(nl<100||nr<140)return;lp.style.width=nl+'px';lp.style.flex='none';rp.style.width=nr+'px';rp.style.flex='none';}
+    function up(){res.classList.remove('active');document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);}
+    document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);
+  });
+}
+makeResizer('res1','panRef','panChat');
+makeResizer('res2','panChat','panEditor');
+
+// ─── EDITOR ──────────────────────────────────────────────
+var RAINBOW=['#e06c75','#e5c07b','#98c379','#56b6c2','#61afef','#c678dd','#e06c75','#e5c07b'];
+
+// ── PYTHON SYNTAX HIGHLIGHTER ─────────────────────
+function escE(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function highlightPython(raw){
+  var holders=[], H=function(s){var i=holders.length;holders.push(s);return '\x00'+i+'\x00';};
+  var s=escE(raw);
+  // strings (triple then single)
+  s=s.replace(/(&quot;&quot;&quot;[\s\S]*?&quot;&quot;&quot;|&#039;&#039;&#039;[\s\S]*?&#039;&#039;&#039;|&quot;(?:[^&]|&(?!quot;))*&quot;|&#039;(?:[^&]|&(?!#039;))*&#039;)/g,
+    function(m){return H('<span style="color:#98c379">'+m+'</span>');});
+  // comments
+  s=s.replace(/(#[^\n]*)/g, function(m){return H('<span style="color:#5c6370;font-style:italic">'+m+'</span>');});
+  // def name
+  s=s.replace(/\bdef\s+(\w+)/g, function(m,n){return '<span style="color:#c678dd">def</span> <span style="color:#61afef">'+n+'</span>';});
+  // class name
+  s=s.replace(/\bclass\s+(\w+)/g, function(m,n){return '<span style="color:#c678dd">class</span> <span style="color:#e5c07b">'+n+'</span>';});
+  // keywords
+  s=s.replace(/\b(False|None|True|and|as|assert|async|await|break|continue|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b/g,
+    '<span style="color:#c678dd">$&</span>');
+  // builtins
+  s=s.replace(/\b(abs|all|any|bool|dict|dir|enumerate|filter|float|format|getattr|hasattr|input|int|isinstance|len|list|map|max|min|open|print|range|repr|reversed|round|set|sorted|str|sum|tuple|type|zip)\b/g,
+    '<span style="color:#56b6c2">$&</span>');
+  // self
+  s=s.replace(/\b(self)\b/g,'<span style="color:#e06c75">$&</span>');
+  // UPPERCASE_CONSTANTS
+  s=s.replace(/\b([A-Z][A-Z0-9_]{2,})\b/g,'<span style="color:#d19a66">$&</span>');
+  // numbers
+  s=s.replace(/\b(\d+\.?\d*)\b/g,'<span style="color:#d19a66">$&</span>');
+  // decorators
+  s=s.replace(/(^|\n)(\s*)(@\w+)/g,'$1$2<span style="color:#e5c07b">$3</span>');
+  // restore holders
+  s=s.replace(/\x00(\d+)\x00/g, function(_,i){return holders[+i];});
+  return s;
+}
+
+var RAINBOW=['#e06c75','#e5c07b','#98c379','#56b6c2','#61afef','#c678dd'];
+
+function updateEditor(){
+  var ta   = document.getElementById('myCode');
+  var hl   = document.getElementById('edHL');
+  var gut  = document.getElementById('edGutter');
+  if(!ta||!hl||!gut) return;
+  var code = ta.value;
+  var lines= code.split('\n');
+  var total= Math.max(lines.length, 30);
+
+  hl.innerHTML = highlightPython(code) + '\n';
+
+  var gutHtml='';
+  for(var i=1;i<=total;i++){
+    var line = lines[i-1]||'';
+    var indent=0;
+    for(var c=0;c<line.length;c++){if(line[c]===' ')indent++;else break;}
+    var col = indent>0 ? RAINBOW[Math.floor(indent/4)%RAINBOW.length] : '#4d5566';
+    gutHtml += '<span style="color:'+col+'">'+i+'</span>\n';
+  }
+  gut.innerHTML = gutHtml;
+}
+
+function syncScroll(){
+  var ta=document.getElementById('myCode');
+  var hl=document.getElementById('edHL');
+  var gut=document.getElementById('edGutter');
+  if(hl)  { hl.scrollTop=ta.scrollTop; hl.scrollLeft=ta.scrollLeft; }
+  if(gut) { gut.scrollTop=ta.scrollTop; }
+}
+
+function updateGutter(){ updateEditor(); }
+
+var edTa=document.getElementById('myCode');
+edTa.addEventListener('input', updateEditor);
+edTa.addEventListener('scroll', syncScroll);
+edTa.addEventListener('keydown',function(e){
+  if(e.key==='Tab'){e.preventDefault();var s=this.selectionStart,v=this.value;this.value=v.substring(0,s)+'    '+v.substring(this.selectionEnd);this.selectionStart=this.selectionEnd=s+4;updateEditor();}
+});
+
+function setHint(code){
+  var o=document.getElementById('hintOverlay');
+  document.getElementById('hintCode').textContent=code;
+  o.style.display=code?'block':'none';
+}
+
+// ─── CHAT RENDER ─────────────────────────────────────────
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function applyGlossary(html){
+  // replace [term] markers
+  html=html.replace(/\[([^\]]+)\]/g,function(_,w){
+    var def=G[w];
+    if(!def)return esc(w);
+    return '<span class="term">'+esc(w)+'<span class="ttp">'+esc(def)+'</span></span>';
+  });
+  return html;
+}
+
+function renderTutor(text){
+  var frag=document.createDocumentFragment();
+  var parts=text.split(/(```(?:python)?\n?[\s\S]*?```)/);
+  var lastCode=null;
+  parts.forEach(function(part){
+    if(/^```/.test(part)){
+      var code=part.replace(/^```(?:python)?\n?/,'').replace(/\n?```$/,'');
+      lastCode=code;
+      var wrap=document.createElement('div');
+      wrap.className='msg-code';
+      wrap.appendChild(document.createTextNode(code));
+      var btn=document.createElement('button');
+      btn.className='cp-btn';btn.textContent='copiar';
+      (function(c){btn.onclick=function(){navigator.clipboard.writeText(c).then(function(){btn.textContent='✓';setTimeout(function(){btn.textContent='copiar';},1500);});setHint(c);};})(code);
+      wrap.appendChild(btn);
+      frag.appendChild(wrap);
+    } else if(part.trim()){
+      var d=document.createElement('div');
+      d.style.whiteSpace='pre-wrap';
+      d.innerHTML=applyGlossary(esc(part));
+      frag.appendChild(d);
+    }
+  });
+  if(lastCode) setHint(lastCode);
+  return frag;
+}
+
+function addMsg(cls,text){
+  var box=document.getElementById('msgs');
+  var d=document.createElement('div');
+  d.className='msg '+cls;
+  if(cls==='t'){d.appendChild(renderTutor(text));}
+  else{d.textContent=text;}
+  box.appendChild(d);
+  box.scrollTop=box.scrollHeight;
+  return d;
+}
+
+// ─── SEND ────────────────────────────────────────────────
+document.getElementById('sendBtn').onclick=send;
+document.getElementById('userTxt').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+
+document.getElementById('revBtn').onclick=function(){
+  var code=document.getElementById('myCode').value.trim();
+  if(!code){alert('Escribí algo en el editor primero.');return;}
+  document.getElementById('userTxt').value='Revisá este código que escribí:\n\n'+code;
+  send();
+};
+
+function getSYS(){
+  return `Eres un tutor de programación experto, paciente y con criterio pedagógico real. Español conversacional, sin rodeos.
+
+CÓDIGO REAL DEL ESTUDIANTE (usá SIEMPRE estos nombres exactos, NUNCA inventes nombres distintos):
+===
+`+userCode+`
+===
+
+Tu misión: guiar al estudiante para reconstruir ese programa desde cero. TÚ mandás el ritmo.
+
+ORDEN (seguilo estrictamente):
+1. Imports (import random, import os)
+2. Constantes de rutas de archivos
+3. Constante LETRAS_ABECEDARIO
+4. Colores ANSI
+5. Constantes de límites (MAX_PISTAS, MAX_RANKING)
+6. Constantes de puntos (PUNTOS_A, B, C)
+7. Constantes de penalizaciones (PENAL_1_PISTA, etc.)
+8. Direcciones de la matriz (DIRECCIONES_F, DIRECCIONES_C)
+9. Funciones de archivo
+10. Funciones de validación
+11. Funciones de matriz
+12. Sistema de ranking
+13. Flujo del juego
+
+FLUJO OBLIGATORIO POR CONCEPTO:
+FASE 1: Explicás el concepto + analogía simple. Una sola pregunta al final.
+FASE 2: Cuando el estudiante entiende, mostrás el código EXACTO del programa real en bloque:
+\`\`\`python
+CÓDIGO EXACTO AQUÍ
+\`\`\`
+Luego: "Cuando lo tengas, apretá Revisar."
+
+REGLA DE ORO: NUNCA inventes nombres. Solo usá los que aparecen literalmente en el código de arriba.
+
+TÉRMINOS: ponelos entre corchetes para activar tooltips: [librería], [import], [constante], [función], [variable], [matriz], [random], [os], [string], [parámetro], [return], [loop], [condicional], [Bubble Sort], [ANSI]
+
+REGLAS:
+- Explicá desde CERO, no asumas conocimiento previo
+- Una idea por mensaje, máx 7 líneas
+- Feedback concreto al revisar código: señalá línea exacta si hay error
+- Celebrá el progreso con emojis
+- Nivel del estudiante: `+nivel;
+}
+
+function callAnthropicAPI(sys, messages, onReply, onError, onDone){
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-opus-4-6',max_tokens:700,system:sys,messages:messages})
+  })
+  .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error((e.error&&e.error.message)||'HTTP '+r.status);});return r.json();})
+  .then(function(d){
+    var reply=((d.content||[]).find(function(b){return b.type==='text';})||{}).text||'Sin respuesta.';
+    onReply(reply);
+  })
+  .catch(onError).then(onDone);
+}
+
+function callGemmaAPI(sys, messages, onReply, onError, onDone){
+  // Convert hist to Gemini format
+  var gemContents = messages.map(function(m){
+    return {role: m.role==='assistant'?'model':'user', parts:[{text:m.content}]};
+  });
+  var MODEL = 'gemma-4-27b-it';
+  fetch('https://generativelanguage.googleapis.com/v1beta/models/'+MODEL+':generateContent?key='+API_KEY,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      system_instruction:{parts:[{text:sys}]},
+      contents: gemContents,
+      generationConfig:{maxOutputTokens:700,temperature:0.7}
+    })
+  })
+  .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error((e.error&&e.error.message)||'HTTP '+r.status);});return r.json();})
+  .then(function(d){
+    var reply = '';
+    try { reply = d.candidates[0].content.parts[0].text; } catch(e){ reply='Sin respuesta.'; }
+    onReply(reply);
+  })
+  .catch(onError).then(onDone);
+}
+
+function send(){
+  var ta=document.getElementById('userTxt');
+  var txt=ta.value.trim();
+  if(!txt||busy)return;
+  addMsg('u',txt);
+  hist.push({role:'user',content:txt});
+  ta.value='';busy=true;
+  document.getElementById('sendBtn').disabled=true;
+  var ld=addMsg('ld','Tutor escribiendo...');
+
+  var sys = getSYS();
+  var onReply = function(reply){
+    ld.remove();addMsg('t',reply);hist.push({role:'assistant',content:reply});saveSession();
+  };
+  var onError = function(err){ ld.remove();addMsg('err','Error: '+err.message); };
+  var onDone  = function(){ busy=false;document.getElementById('sendBtn').disabled=false;document.getElementById('userTxt').focus(); };
+
+  if(selectedModel==='gemma'){
+    callGemmaAPI(sys, hist.slice(0,-1), onReply, onError, onDone);
+  } else {
+    callAnthropicAPI(sys, hist, onReply, onError, onDone);
+  }
+}
+
+document.getElementById('newSessBtn').onclick=function(){if(confirm('¿Empezar sesión nueva? Se perderá el progreso actual.')){clearSession();location.reload();}};updateGutter();
+</script>
+</body>
+</html>
