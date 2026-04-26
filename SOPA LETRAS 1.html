@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <title>Tutor IA — Python</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -140,10 +139,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ed-gutter-inner{font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;text-align:right;padding:14px 6px 14px 0;color:#4d5566;white-space:pre;overflow:hidden;height:100%}
 .ed-code-wrap{flex:1;position:relative;overflow:hidden}
 .ed-hl{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;padding:14px 12px;white-space:pre;word-break:normal;overflow-wrap:normal;pointer-events:none;z-index:1;overflow:hidden;margin:0}
-.ed-ta{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;padding:14px 12px;border:none;outline:none;resize:none;background:transparent;color:#0d1117;caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;z-index:2;user-select:text;-webkit-user-select:text}
-.ed-ta::placeholder{color:#3d444d}
-.hint-overlay{position:absolute;bottom:8px;left:6px;right:6px;background:rgba(13,17,23,.92);border:1px solid #1f6feb;border-radius:8px;padding:8px 12px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#79c0ff;white-space:pre;z-index:15;pointer-events:none;display:none;backdrop-filter:blur(4px);box-shadow:0 4px 12px rgba(0,0,0,.4)}
-.hint-label{font-size:10px;color:#58a6ff;margin-bottom:4px;font-family:sans-serif;font-weight:600;letter-spacing:.03em}
+.ed-ta{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;padding:14px 12px;border:none;outline:none;resize:none;background:transparent;color:transparent;caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;z-index:2;user-select:text;-webkit-text-fill-color:transparent}
+.ed-ta::placeholder{color:transparent;-webkit-text-fill-color:#3d444d}
+.ed-ta:placeholder-shown + .ed-hl{color:#3d444d}
+.hint-overlay{position:absolute;bottom:10px;left:6px;right:6px;background:rgba(31,111,235,.13);border:1px solid #1f6feb;border-radius:8px;padding:10px 12px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#79c0ff;white-space:pre;z-index:10;pointer-events:none;display:none}
+.hint-label{font-size:10px;color:#58a6ff;margin-bottom:5px;font-family:sans-serif;font-weight:600}
 .ed-foot{padding:6px 12px;border-top:1px solid #30363d;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#161b22}
 .ed-foot-hint{font-size:10px;color:#3d444d;font-family:monospace}
 .rev-btn{font-size:11px;padding:4px 12px;border-radius:6px;background:#238636;color:#fff;border:none;cursor:pointer;font-family:inherit;font-weight:500}
@@ -265,8 +265,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="tb-sub">Reconstruí tu código desde cero, guiado paso a paso</div>
     </div>
     <div class="tb-lvl" id="tbLvl">Principiante</div>
-    <span id="saveIndicator" style="font-size:11px;color:#3fb950;margin-left:8px;min-width:80px"></span>
-    <button id="newSessBtn" style="padding:3px 10px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">Nueva sesión</button>
+    <button id="newSessBtn" style="margin-left:8px;padding:3px 10px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">Nueva sesión</button>
   </div>
 
   <div class="panels">
@@ -309,13 +308,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="ed-container" id="edContainer">
           <div class="ed-code-wrap">
             <pre class="ed-hl" id="edHL" aria-hidden="true"></pre>
-            <textarea class="ed-ta" id="myCode" spellcheck="false" autocomplete="off" placeholder="# Escribí tu código acá..."></textarea>
-            <div class="hint-overlay" id="hintOverlay">
-              <div class="hint-label">✏️ Escribí esto:</div>
-              <span id="hintCode"></span>
-            </div>
+            <textarea class="ed-ta" id="myCode" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="# Escribí tu código acá..."></textarea>
           </div>
         </div>
+      </div>
+      <div class="hint-overlay" id="hintOverlay" style="position:absolute;bottom:44px;left:48px;right:8px;z-index:20">
+        <div class="hint-label">✏️ Escribí esto:</div>
+        <span id="hintCode"></span>
       </div>
       <div class="ed-foot">
         <span class="ed-foot-hint">① Tutor explica → ② Escribís → ③ Revisar</span>
@@ -333,15 +332,25 @@ var userCode= '';
 var hist    = [];
 var busy    = false;
 
-// ─── SUPABASE ────────────────────────────────────────────
-var SUPA_URL = "https://rucvyqagsancjkzsfpgg.supabase.co";
-var SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1Y3Z5cWFnc2FuY2prenNmcGdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMzUxNTMsImV4cCI6MjA5MjgxMTE1M30.aBA0_f7UF0QpVirs8hGRVvMLhOR0s4ur8nteUAhFjOA";
-var supabase = null;
-var currentUserId = null;
-var saveTimer = null;
+// ─── PERSISTENCE ─────────────────────────────────────────
+var STORAGE_KEY = 'tutor_session_v1';
 
-function initSupabase(){
-  supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+function saveSession(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      nivel: nivel, userCode: userCode, hist: hist, model: selectedModel,
+      savedAt: new Date().toISOString()
+    }));
+  } catch(e){}
+}
+
+function loadSession(){
+  try { var r=localStorage.getItem(STORAGE_KEY); return r?JSON.parse(r):null; }
+  catch(e){ return null; }
+}
+
+function clearSession(){
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
 }
 
 function fmtDate(iso){
@@ -349,216 +358,44 @@ function fmtDate(iso){
   return d.toLocaleDateString('es',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
 }
 
-// Debounced save — saves 2s after last change to avoid hammering DB
-function saveSession(){
-  if(!supabase||!currentUserId) return;
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(function(){
-    var editorCode='';
-    try{ editorCode=document.getElementById('myCode').value||''; }catch(e){}
-    supabase.from('sessions').upsert({
-      user_id: currentUserId,
-      nivel: nivel,
-      modelo: selectedModel,
-      user_code: userCode,
-      editor_code: editorCode,
-      hist: hist,
-      updated_at: new Date().toISOString()
-    },{onConflict:'user_id'}).then(function(r){
-      if(r.error) console.warn('Save error:',r.error.message);
-      else updateSaveIndicator('✓ guardado');
-    });
-  }, 2000);
-}
-
-function updateSaveIndicator(msg){
-  var el=document.getElementById('saveIndicator');
-  if(el){ el.textContent=msg; setTimeout(function(){el.textContent='';},3000); }
-}
-
-async function loadSessionFromDB(userId){
-  if(!supabase) return null;
-  var r = await supabase.from('sessions').select('*').eq('user_id',userId).single();
-  if(r.error||!r.data) return null;
-  return r.data;
-}
-
-function clearSession(){
-  if(!supabase||!currentUserId) return;
-  supabase.from('sessions').delete().eq('user_id',currentUserId);
-  currentUserId=null;
-  hist=[];
-}
-
-// ─── SUPABASE MAGIC LINK AUTH + SESSION RESTORE ─────────
-initSupabase();
-
-function showLoginUI(){
-  if(document.getElementById('loginBanner')) return;
+// Check on load for saved session
+(function(){
+  var s = loadSession();
+  if(!s || !s.hist || s.hist.length===0) return;
+  // Show resume banner inside step1
   var banner = document.createElement('div');
-  banner.id = 'loginBanner';
-  banner.style.cssText = 'background:#0d1f38;border:1px solid #1f6feb;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px';
-  banner.innerHTML =
-    '<div style="font-size:14px;font-weight:600;color:#e6edf3">☁️ Guardá tu progreso en la nube</div>' +
-    '<div style="font-size:12px;color:#8b949e;line-height:1.5">Ingresá tu email — te mandamos un link para entrar. Sin contraseña.</div>';
-
-  var emailRow = document.createElement('div');
-  emailRow.style.cssText = 'display:flex;gap:8px';
-  var emailInp = document.createElement('input');
-  emailInp.type = 'email';
-  emailInp.placeholder = 'tu@email.com';
-  emailInp.style.cssText = 'flex:1;padding:8px 10px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#e6edf3;font-size:12px;outline:none;font-family:inherit';
-  emailInp.onfocus = function(){ this.style.borderColor='#58a6ff'; };
-  emailInp.onblur  = function(){ this.style.borderColor='#30363d'; };
-
-  var sendBtn = document.createElement('button');
-  sendBtn.className = 'btn btn-primary';
-  sendBtn.style.cssText = 'font-size:12px;padding:8px 14px;white-space:nowrap';
-  sendBtn.textContent = 'Enviar link →';
-
-  var msgDiv = document.createElement('div');
-  msgDiv.style.cssText = 'font-size:12px;color:#3fb950;display:none;text-align:center;line-height:1.5';
-
-  sendBtn.onclick = function(){
-    var email = emailInp.value.trim();
-    if(!email || !email.includes('@')){ emailInp.style.borderColor='#d1242f'; return; }
-    sendBtn.disabled = true;
-    sendBtn.textContent = 'Enviando...';
-    supabase.auth.signInWithOtp({
-      email: email,
-      options: { emailRedirectTo: window.location.href }
-    }).then(function(r){
-      if(r.error){
-        msgDiv.style.color='#d1242f';
-        msgDiv.textContent = 'Error: ' + r.error.message;
-        msgDiv.style.display='block';
-        sendBtn.disabled=false;
-        sendBtn.textContent='Enviar link →';
-      } else {
-        emailRow.style.display='none';
-        msgDiv.style.color='#3fb950';
-        msgDiv.innerHTML = '✅ Link enviado a <strong>'+email+'</strong><br>Revisá tu email y hacé click en el link para entrar.';
-        msgDiv.style.display='block';
-      }
-    });
-  };
-
-  emailInp.addEventListener('keydown', function(e){ if(e.key==='Enter') sendBtn.click(); });
-
-  emailRow.appendChild(emailInp);
-  emailRow.appendChild(sendBtn);
-  banner.appendChild(emailRow);
-  banner.appendChild(msgDiv);
-
-  var skipBtn = document.createElement('button');
-  skipBtn.className = 'btn btn-ghost';
-  skipBtn.style.cssText = 'font-size:11px;align-self:center';
-  skipBtn.textContent = 'Continuar sin login (solo este dispositivo)';
-  skipBtn.onclick = function(){
-    currentUserId = 'guest_' + Math.random().toString(36).substr(2,9);
-    banner.remove();
-  };
-  banner.appendChild(skipBtn);
-
-  var step1 = document.getElementById('step1');
+  banner.style.cssText='background:#0d2f1a;border:1px solid #238636;border-radius:8px;padding:12px 14px;font-size:12px;color:#3fb950;line-height:1.6;display:flex;flex-direction:column;gap:8px';
+  banner.innerHTML='<strong>📖 Sesión guardada encontrada</strong><span style="color:#8b949e">Guardada el '+fmtDate(s.savedAt)+' · '+s.hist.length+' mensajes</span>';
+  var row=document.createElement('div');
+  row.style.cssText='display:flex;gap:8px;margin-top:2px';
+  var btnResume=document.createElement('button');
+  btnResume.className='btn btn-success';btnResume.style.padding='6px 14px';btnResume.style.fontSize='12px';
+  btnResume.textContent='Continuar sesión →';
+  var btnNew=document.createElement('button');
+  btnNew.className='btn btn-ghost';btnNew.style.padding='6px 14px';btnNew.style.fontSize='12px';
+  btnNew.textContent='Nueva sesión';
+  row.appendChild(btnResume);row.appendChild(btnNew);
+  banner.appendChild(row);
+  var step1=document.getElementById('step1');
   step1.insertBefore(banner, step1.querySelector('.btn-row'));
-}
 
-async function checkAuthAndRestore(){
-  var r = await supabase.auth.getSession();
-  var sess = r.data && r.data.session;
-
-  if(!sess){ showLoginUI(); return; }
-
-  var user = sess.user;
-  currentUserId = user.id;
-
-  // Show logged-in badge in wizard
-  var badge = document.createElement('div');
-  badge.style.cssText = 'background:#0d2f1a;border:1px solid #238636;border-radius:8px;padding:8px 12px;font-size:12px;color:#3fb950;display:flex;align-items:center;justify-content:space-between;gap:8px';
-  badge.innerHTML = '<span>✅ <strong>' + user.email + '</strong></span>';
-  var logoutBtn = document.createElement('button');
-  logoutBtn.className = 'btn btn-ghost';
-  logoutBtn.style.cssText = 'font-size:11px;padding:2px 8px';
-  logoutBtn.textContent = 'Salir';
-  logoutBtn.onclick = function(){ supabase.auth.signOut().then(function(){ location.reload(); }); };
-  badge.appendChild(logoutBtn);
-  var step1 = document.getElementById('step1');
-  step1.insertBefore(badge, step1.querySelector('.btn-row'));
-
-  // Try to restore saved session from Supabase
-  var saved = await loadSessionFromDB(currentUserId);
-  if(!saved || !saved.hist || saved.hist.length === 0) return;
-
-  var rb = document.createElement('div');
-  rb.style.cssText = 'background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px';
-  rb.innerHTML =
-    '<div style="font-size:13px;font-weight:600;color:#e6edf3">📖 Sesión guardada encontrada</div>' +
-    '<div style="font-size:11px;color:#8b949e">Guardada el ' + fmtDate(saved.updated_at) + ' · ' + saved.hist.length + ' mensajes</div>';
-
-  var row = document.createElement('div');
-  row.style.cssText = 'display:flex;gap:8px';
-
-  var btnR = document.createElement('button');
-  btnR.className = 'btn btn-success';
-  btnR.style.cssText = 'font-size:12px;padding:7px 14px;flex:1';
-  btnR.textContent = 'Continuar sesión →';
-  btnR.onclick = function(){
-    var key = document.getElementById('apiKey').value.trim();
-    if(!key){ alert('Ingresá tu API key primero.'); return; }
-    API_KEY = key;
-    nivel    = saved.nivel    || 'principiante';
-    userCode = saved.user_code|| '';
-    hist     = saved.hist     || [];
-    if(saved.modelo) selectedModel = saved.modelo;
-    restoreAndLaunch(saved.editor_code || '');
+  btnResume.onclick=function(){
+    var key=document.getElementById('apiKey').value.trim();
+    if(!key.startsWith('sk-')){alert('Primero ingresá tu API key.');return;}
+    API_KEY=key; nivel=s.nivel; userCode=s.userCode; hist=s.hist; if(s.model)selectedModel=s.model;
+    document.getElementById('wizard').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('refPre').textContent=userCode;
+    var lvlLabels={principiante:'🌱 Principiante',intermedio:'⚡ Intermedio',avanzado:'🔥 Avanzado'};
+    document.getElementById('tbLvl').textContent=lvlLabels[nivel]||nivel;
+    // Replay messages
+    hist.forEach(function(m){addMsg(m.role==='user'?'u':'t', m.content);});
+    addMsg('t','↩️ Bienvenido de vuelta. Retomamos donde dejamos.');
+    document.getElementById('userTxt').focus();
+    updateGutter();
   };
-
-  var btnN = document.createElement('button');
-  btnN.className = 'btn btn-ghost';
-  btnN.style.cssText = 'font-size:12px;padding:7px 14px';
-  btnN.textContent = 'Nueva sesión';
-  btnN.onclick = function(){
-    supabase.from('sessions').delete().eq('user_id', currentUserId).then(function(){ rb.remove(); });
-  };
-
-  row.appendChild(btnR);
-  row.appendChild(btnN);
-  rb.appendChild(row);
-  step1.insertBefore(rb, step1.querySelector('.btn-row'));
-}
-
-function restoreAndLaunch(editorCode){
-  document.getElementById('wizard').style.display = 'none';
-  document.getElementById('app').style.display    = 'flex';
-  document.getElementById('refPre').textContent   = userCode;
-  var lvlLabels = {principiante:'🌱 Principiante', intermedio:'⚡ Intermedio', avanzado:'🔥 Avanzado'};
-  document.getElementById('tbLvl').textContent  = lvlLabels[nivel] || nivel;
-  document.getElementById('tbLvl').style.borderLeft = selectedModel==='gemma' ? '3px solid #4285f4' : '3px solid #1f6feb';
-  if(editorCode){ document.getElementById('myCode').value = editorCode; }
-  hist.forEach(function(m){ addMsg(m.role==='user'?'u':'t', m.content); });
-  var wb = document.createElement('div');
-  wb.style.cssText = 'text-align:center;font-size:11px;color:#8c959f;padding:6px;border-top:1px dashed #e1e4e8;margin-top:4px';
-  wb.textContent = '↩️ Sesión restaurada';
-  document.getElementById('msgs').appendChild(wb);
-  document.getElementById('msgs').scrollTop = 99999;
-  document.getElementById('userTxt').focus();
-  updateEditor();
-}
-
-// Handle redirect back from magic link click
-supabase.auth.onAuthStateChange(function(event, session){
-  if(event === 'SIGNED_IN' && session){
-    currentUserId = session.user.id;
-    // Remove login banner if present
-    var b = document.getElementById('loginBanner');
-    if(b) b.remove();
-    // Refresh page so checkAuthAndRestore runs clean
-    location.reload();
-  }
-});
-
-checkAuthAndRestore();
+  btnNew.onclick=function(){clearSession();banner.remove();};
+})();
 
 // ─── GLOSSARY ────────────────────────────────────────────
 var G = {
@@ -720,8 +557,6 @@ document.getElementById('btn3').onclick=function(){
 
 // ─── LAUNCH APP ──────────────────────────────────────────
 function launchApp(){
-  // Ensure we have a user ID even for guests
-  if(!currentUserId) currentUserId='guest_'+Math.random().toString(36).substr(2,9);
   document.getElementById('wizard').style.display='none';
   document.getElementById('app').style.display='flex';
 
