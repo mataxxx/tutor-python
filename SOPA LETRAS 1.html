@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="initSupabase();checkAuthAndRestore();" onerror="alert('No se pudo cargar Supabase. Revisá tu conexión.')"></script>
-<title>Tutor IA — Python</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Tutor IA — Python v42</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -175,7 +175,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión</div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v42</span></div>
       <div class="step-sub">Ingresá tu email y te mandamos un link para entrar. Sin contraseña. Tu progreso se guarda automáticamente.</div>
       <div>
         <div class="field-lbl">Tu email</div>
@@ -902,6 +902,11 @@ function send(){
 }
 
 document.getElementById('newSessBtn').onclick=function(){if(confirm('¿Empezar sesión nueva? Se perderá el progreso actual.')){clearSession();location.reload();}};updateGutter();
+// Init after everything is defined
+window.addEventListener("DOMContentLoaded", function(){
+  initSupabase();
+  checkAuthAndRestore();
+});
 </script>
 </body>
 </html>
