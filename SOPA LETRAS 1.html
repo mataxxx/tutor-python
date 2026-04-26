@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<title>Tutor IA — Python v43</title>
+
+<title>Tutor IA — Python v44</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -175,7 +175,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v43</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v44</span></div>
       <div class="step-sub">Ingresá tu email y te mandamos un link para entrar. Sin contraseña. Tu progreso se guarda automáticamente.</div>
       <div>
         <div class="field-lbl">Tu email</div>
@@ -347,9 +347,113 @@ var supabase = null;
 var currentUserId = null;
 var saveTimer = null;
 
-function initSupabase(){
-  supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-}
+// ── SUPABASE REST API (no SDK needed) ──────────────────
+var SUPA_URL = "https://rucvyqagsancjkzsfpgg.supabase.co";
+var SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1Y3Z5cWFnc2FuY2prenNmcGdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMzUxNTMsImV4cCI6MjA5MjgxMTE1M30.aBA0_f7UF0QpVirs8hGRVvMLhOR0s4ur8nteUAhFjOA";
+var supabase = {
+  _headers: function(){
+    return {
+      'Content-Type':'application/json',
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + (supabase._token || SUPA_KEY)
+    };
+  },
+  _token: null,
+  _user: null,
+  auth: {
+    getSession: async function(){
+      // Check localStorage for saved token
+      try {
+        var raw = localStorage.getItem('sb_session');
+        if(raw){
+          var sess = JSON.parse(raw);
+          // Check expiry
+          if(sess.expires_at && Date.now()/1000 < sess.expires_at){
+            supabase._token = sess.access_token;
+            supabase._user  = sess.user;
+            return {data:{session:sess}};
+          } else {
+            localStorage.removeItem('sb_session');
+          }
+        }
+      } catch(e){}
+      return {data:{session:null}};
+    },
+    signInWithOtp: async function(opts){
+      try {
+        var r = await fetch(SUPA_URL+'/auth/v1/otp', {
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY},
+          body: JSON.stringify({email: opts.email, create_user:true})
+        });
+        var d = await r.json();
+        if(!r.ok) return {error:{message: d.msg||d.error_description||'Error'}};
+        return {data:{}, error:null};
+      } catch(e){ return {error:{message:e.message}}; }
+    },
+    signOut: async function(){
+      localStorage.removeItem('sb_session');
+      supabase._token=null; supabase._user=null;
+      return {};
+    },
+    onAuthStateChange: function(cb){ supabase._authCb = cb; }
+  },
+  from: function(table){
+    return {
+      _table: table,
+      upsert: function(data, opts){
+        var conflict = opts&&opts.onConflict ? '?on_conflict='+opts.onConflict : '';
+        return {
+          then: function(cb){
+            fetch(SUPA_URL+'/rest/v1/'+table+conflict, {
+              method:'POST',
+              headers: Object.assign({}, supabase._headers(), {
+                'Prefer':'resolution=merge-duplicates,return=minimal'
+              }),
+              body: JSON.stringify(data)
+            }).then(function(r){
+              cb(r.ok?{data:null,error:null}:{error:{message:'HTTP '+r.status}});
+            }).catch(function(e){ cb({error:{message:e.message}}); });
+            return {catch:function(){}};
+          }
+        };
+      },
+      select: function(cols){
+        return {
+          eq: function(col, val){
+            return {
+              single: async function(){
+                try {
+                  var r = await fetch(SUPA_URL+'/rest/v1/'+table+'?'+col+'=eq.'+encodeURIComponent(val)+'&limit=1', {
+                    headers: supabase._headers()
+                  });
+                  var d = await r.json();
+                  if(!r.ok) return {data:null,error:{message:'HTTP '+r.status}};
+                  return {data: Array.isArray(d)&&d.length>0?d[0]:null, error:null};
+                } catch(e){ return {data:null,error:{message:e.message}}; }
+              }
+            };
+          }
+        };
+      },
+      delete: function(){
+        return {
+          eq: function(col,val){
+            return {
+              then: function(cb){
+                fetch(SUPA_URL+'/rest/v1/'+table+'?'+col+'=eq.'+encodeURIComponent(val), {
+                  method:'DELETE', headers: supabase._headers()
+                }).then(function(r){ cb({error:r.ok?null:{message:'HTTP '+r.status}}); });
+                return {catch:function(){}};
+              }
+            };
+          }
+        };
+      }
+    };
+  }
+};
+function initSupabase(){ /* no-op, supabase object already initialized */ }
 
 function fmtDate(iso){
   var d=new Date(iso);
@@ -904,7 +1008,29 @@ function send(){
 document.getElementById('newSessBtn').onclick=function(){if(confirm('¿Empezar sesión nueva? Se perderá el progreso actual.')){clearSession();location.reload();}};updateGutter();
 // Init after everything is defined
 window.addEventListener("DOMContentLoaded", function(){
-  initSupabase();
+  // Check if magic link token is in URL hash
+  var hash = window.location.hash;
+  if(hash && hash.includes('access_token')){
+    var params = new URLSearchParams(hash.replace('#',''));
+    var token = params.get('access_token');
+    var expiry = params.get('expires_at') || (Date.now()/1000 + 3600);
+    if(token){
+      // Decode user from JWT
+      try {
+        var payload = JSON.parse(atob(token.split('.')[1]));
+        var sess = {
+          access_token: token,
+          expires_at: parseInt(expiry),
+          user: { id: payload.sub, email: payload.email }
+        };
+        localStorage.setItem('sb_session', JSON.stringify(sess));
+        supabase._token = token;
+        supabase._user  = sess.user;
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch(e){ console.warn('Token parse error:', e); }
+    }
+  }
   checkAuthAndRestore();
 });
 </script>
