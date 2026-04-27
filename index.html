@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v59</title>
+<title>Tutor IA — Python v61</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -176,7 +176,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v59</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v61</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -1078,7 +1078,8 @@ REGLAS ESPECIALES PARA CÓDIGO:
 - Cuando mostrés código, escribilo SIN alinear los = con espacios extra. Ejemplo correcto: AZUL = "\\033[34m"  (NO: AZUL       = "\\033[34m")
 - Para los colores ANSI: cuando los expliques, mencioná qué número corresponde a qué color. Ej: 34=azul, 92=verde brillante, 93=amarillo, 0=reset. Pero NO lo expliques todo de una — explicá el concepto primero, luego preguntá si el estudiante quiere saber más sobre los números específicos.
 - Cuando expliques algo técnico como códigos ANSI, terminá siempre con: "¿Querés que profundice en esto o seguimos?"
-- Nunca expliques más de UN concepto por mensaje aunque el estudiante diga "sí, seguimos" — avanzá de a uno.`+nivel;
+- Nunca expliques más de UN concepto por mensaje aunque el estudiante diga "sí, seguimos" — avanzá de a uno.
+- NUNCA muestres tu razonamiento interno ni bullets de análisis. Solo mostrá la respuesta final al estudiante.`+nivel;
 }
 
 function callAnthropicAPI(sys, messages, onReply, onError, onDone){
@@ -1107,13 +1108,19 @@ function callGemmaAPI(sys, messages, onReply, onError, onDone){
     body:JSON.stringify({
       system_instruction:{parts:[{text:sys}]},
       contents: gemContents,
-      generationConfig:{maxOutputTokens:700,temperature:0.7}
+      generationConfig:{maxOutputTokens:700,temperature:0.7,thinkingConfig:{thinkingBudget:0}}
     })
   })
   .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error((e.error&&e.error.message)||'HTTP '+r.status);});return r.json();})
   .then(function(d){
     var reply = '';
     try { reply = d.candidates[0].content.parts[0].text; } catch(e){ reply='Sin respuesta.'; }
+    // Strip Gemma thinking blocks <think>...</think>
+    reply = reply.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    // Also strip markdown bullet analysis blocks (internal reasoning leaked)
+    if(reply.startsWith('*') && reply.includes('Correct)') && reply.includes('Move to')){
+      reply = 'Perfecto, todo está correcto. Seguimos con la siguiente función.';
+    }
     onReply(reply);
   })
   .catch(onError).then(onDone);
