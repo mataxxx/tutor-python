@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v50</title>
+<title>Tutor IA — Python v53</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -140,7 +140,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ed-gutter-inner{font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;text-align:right;padding:14px 6px 14px 0;color:#4d5566;white-space:pre;overflow:hidden;height:100%}
 .ed-code-wrap{flex:1;position:relative;overflow:hidden}
 .ed-hl{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;padding:14px 12px;white-space:pre;word-break:normal;overflow-wrap:normal;pointer-events:none;z-index:1;overflow:hidden;margin:0}
-.ed-ta{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;padding:14px 12px;border:none;outline:none;resize:none;background:rgba(0,0,0,0.01);color:rgba(255,255,255,0.08);caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;z-index:2;user-select:text;-webkit-user-select:text}
+.ed-ta{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;padding:14px 12px;border:none;outline:none;resize:none;background:rgba(0,0,0,0.01);color:#0d1117;caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;z-index:2;user-select:text;-webkit-user-select:text}
 .ed-ta::placeholder{color:#3d444d}
 .hint-overlay{position:absolute;bottom:8px;left:8px;right:8px;background:#0d1f38;border:1px solid #1f6feb;border-radius:8px;padding:10px 14px;font-family:'SF Mono','Fira Code',monospace;font-size:11.5px;color:#79c0ff;white-space:pre-wrap;word-break:break-word;z-index:15;pointer-events:none;display:none;box-shadow:0 4px 16px rgba(0,0,0,.5)}
 .hint-label{font-size:10px;color:#58a6ff;margin-bottom:4px;font-family:sans-serif;font-weight:600;letter-spacing:.03em}
@@ -180,7 +180,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v50</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v53</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -981,16 +981,22 @@ function renderTutor(text){
   var frag=document.createDocumentFragment();
   var parts=text.split(/(```(?:python)?\n?[\s\S]*?```)/);
   var lastCode=null;
-  parts.forEach(function(part){
+  parts.forEach(function(part, idx){
     if(/^```/.test(part)){
       var code=part.replace(/^```(?:python)?\n?/,'').replace(/\n?```$/,'');
-      lastCode=code;
+      // Only show hint box if prev text contains write instruction
+      var prevText = parts[idx-1]||'';
+      var isWriteHint = /escrib[ií]/i.test(prevText)||/Cuando lo tengas/i.test(prevText)||/en el editor/i.test(prevText);
+      if(isWriteHint) lastCode=code;
       var wrap=document.createElement('div');
       wrap.className='msg-code';
       wrap.appendChild(document.createTextNode(code));
       var btn=document.createElement('button');
       btn.className='cp-btn';btn.textContent='copiar';
-      (function(c){btn.onclick=function(){navigator.clipboard.writeText(c).then(function(){btn.textContent='✓';setTimeout(function(){btn.textContent='copiar';},1500);});setHint(c);};})(code);
+      (function(c,hint){btn.onclick=function(){
+        navigator.clipboard.writeText(c).then(function(){btn.textContent='✓';setTimeout(function(){btn.textContent='copiar';},1500);});
+        if(hint) setHint(c);
+      };})(code,isWriteHint);
       wrap.appendChild(btn);
       frag.appendChild(wrap);
     } else if(part.trim()){
@@ -1000,7 +1006,7 @@ function renderTutor(text){
       frag.appendChild(d);
     }
   });
-  if(lastCode) setHint(lastCode);
+  if(lastCode) setHint(lastCode); else setHint(null);
   return frag;
 }
 
@@ -1065,10 +1071,16 @@ TÉRMINOS: ponelos entre corchetes para activar tooltips: [librería], [import],
 
 REGLAS:
 - Explicá desde CERO, no asumas conocimiento previo
-- Una idea por mensaje, máx 7 líneas
+- Una idea por mensaje, máx 6 líneas de texto
 - Feedback concreto al revisar código: señalá línea exacta si hay error
 - Celebrá el progreso con emojis
-- Nivel del estudiante: `+nivel;
+- Nivel del estudiante: NIVEL_VAR
+
+REGLAS ESPECIALES PARA CÓDIGO:
+- Cuando mostrés código, escribilo SIN alinear los = con espacios extra. Ejemplo correcto: AZUL = "\033[34m"  (NO: AZUL       = "\033[34m")
+- Para los colores ANSI: cuando los expliques, mencioná qué número corresponde a qué color. Ej: 34=azul, 92=verde brillante, 93=amarillo, 0=reset. Pero NO lo expliques todo de una — explicá el concepto primero, luego preguntá si el estudiante quiere saber más sobre los números específicos.
+- Cuando expliques algo técnico como códigos ANSI, terminá siempre con: "¿Querés que profundice en esto o seguimos?"
+- Nunca expliques más de UN concepto por mensaje aunque el estudiante diga "sí, seguimos" — avanzá de a uno.`+nivel;
 }
 
 function callAnthropicAPI(sys, messages, onReply, onError, onDone){
