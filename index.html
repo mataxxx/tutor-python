@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v56</title>
+<title>Tutor IA — Python v58</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -176,7 +176,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v56</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v58</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -207,7 +207,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="model-card" id="mc-gemma" onclick="selectModel('gemma')">
           <div style="font-size:22px">✨</div>
           <div style="font-size:13px;font-weight:600;color:#e6edf3;margin:4px 0">Gemma 4</div>
-          <div style="font-size:11px;color:#6e7681;line-height:1.4">Google · gemma-4-27b-it</div>
+          <div style="font-size:11px;color:#6e7681;line-height:1.4">Google · gemma-4-31b-it</div>
         </div>
       </div>
       <div>
@@ -811,7 +811,7 @@ function analyzeCode(){
   box.textContent='Analizando tu código...';
   var prompt='Analizá este código Python en exactamente 4-6 líneas cortas. Lista los bloques principales (imports, constantes, archivos, validaciones, matriz, ranking, juego) y una frase breve de para qué sirve cada uno. Usá emojis. Nada más.\n\nCÓDIGO:\n'+userCode;
   if(selectedModel==='gemma'){
-    fetch('https://generativelanguage.googleapis.com/v1beta/models/gemma-4-27b-it:generateContent?key='+API_KEY,{
+    fetch('https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent?key='+API_KEY,{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:300}})
     }).then(function(r){return r.json();})
@@ -1096,7 +1096,7 @@ function callGemmaAPI(sys, messages, onReply, onError, onDone){
   var gemContents = messages.map(function(m){
     return {role: m.role==='assistant'?'model':'user', parts:[{text:m.content}]};
   });
-  var MODEL = 'gemma-4-27b-it';
+  var MODEL = 'gemma-4-31b-it';
   fetch('https://generativelanguage.googleapis.com/v1beta/models/'+MODEL+':generateContent?key='+API_KEY,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -1152,13 +1152,19 @@ document.getElementById('logoutBtn').onclick=function(){
 };
 
 document.getElementById('changeKeyBtn').onclick=function(){
-  var newKey=prompt('Ingresá tu nueva API key:');
+  var model = prompt('Modelo (escribe "claude" o "gemma"):','claude');
+  if(!model) return;
+  model = model.trim().toLowerCase();
+  if(model!=='claude'&&model!=='gemma'){ alert('Solo "claude" o "gemma".'); return; }
+  selectedModel = model==='gemma' ? 'gemma' : 'anthropic';
+  var newKey=prompt('Ingresá tu API key para '+(selectedModel==='gemma'?'Google AI Studio (AIza...)':'Anthropic (sk-ant...)' )+':');
   if(!newKey) return;
   API_KEY=newKey;
   if(currentUserId&&!currentUserId.startsWith('guest_')){
-    supabase.from('sessions').upsert({user_id:currentUserId,api_key:newKey},{onConflict:'user_id'});
+    supabase.from('sessions').upsert({user_id:currentUserId,api_key:newKey,modelo:selectedModel},{onConflict:'user_id'});
   }
-  alert('API key actualizada.');
+  document.getElementById('tbLvl').style.borderLeft=selectedModel==='gemma'?'3px solid #4285f4':'3px solid #1f6feb';
+  alert('Cambiado a '+(selectedModel==='gemma'?'Gemma 4 (Google)':'Claude (Anthropic)')+' ✅');
 };
 
 // Progress tracking
