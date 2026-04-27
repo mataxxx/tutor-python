@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v76</title>
+<title>Tutor IA — Python v78</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -13,7 +13,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
    SETUP WIZARD  (steps 1-3)
 ════════════════════════════════ */
 #wizard{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
-.card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:560px;display:flex;flex-direction:column;overflow:hidden;padding-bottom:8px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:560px;display:flex;flex-direction:column;overflow:hidden}
 
 /* step header */
 .step-bar{display:flex;padding:20px 24px 0;gap:8px;align-items:center}
@@ -202,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v76</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v78</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -218,28 +218,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <button class="btn btn-ghost" id="btnRegister" style="width:100%;font-size:12px">Crear cuenta nueva</button>
       </div>
       <div style="font-size:11px;color:#6e7681;text-align:center"><a href="#" id="skipLogin" style="color:#58a6ff">Continuar sin login (solo este dispositivo)</a></div>
+      <div style="height:4px"></div>
     </div>
 
     <!-- STEP 2: MODEL + API KEY -->
     <div class="step-body" id="step2" style="display:none">
       <div class="step-title">Elegí tu IA</div>
       <div class="step-sub">Seleccioná el modelo. Podés cambiar la API key desde ⚙️ Configuración una vez que entres.</div>
-      <divdisplay:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
         <div class="model-card sel" id="mc-anthropic" onclick="selectModel('anthropic')">
-          <div style="font-size:20px">🤖</div>
+          <img src="https://cdn.brandfetch.io/idmJWF3N06/w/400/h/400/theme/dark/icon.png" style="width:32px;height:32px;border-radius:6px;object-fit:contain" onerror="this.style.display='none'">
           <div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">Claude</div>
           <div style="font-size:10px;color:#6e7681;line-height:1.4">Anthropic · Sonnet</div>
         </div>
         <div class="model-card" id="mc-openai" onclick="selectModel('openai')">
-          <div style="font-size:20px">⚡</div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg" style="width:32px;height:32px;object-fit:contain;filter:invert(1)" onerror="this.style.display='none'">
           <div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">GPT-5.4 mini</div>
           <div style="font-size:10px;color:#6e7681;line-height:1.4">OpenAI · Recomendado</div>
         </div>
         <div class="model-card" id="mc-gemma" onclick="selectModel('gemma')">
-          <div style="font-size:20px">✨</div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" style="width:32px;height:16px;object-fit:contain" onerror="this.style.display='none'">
           <div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">Gemma 4</div>
           <div style="font-size:10px;color:#6e7681;line-height:1.4">Google · Gratis</div>
-        </div></div>
+        </div>
+      </div</div>
       <div id="keyLabel" style="display:none"></div>
       <input type="hidden" id="apiKey" value="">
       <div id="keyHelper" style="display:none"></div>
@@ -398,17 +400,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="settings-lbl">Modelo de IA</div>
         <div class="model-grid">
           <div class="model-opt" id="smc-anthropic" onclick="setSettingsModel('anthropic')">
-            <div class="mo-icon">🤖</div>
+            <img src="https://cdn.brandfetch.io/idmJWF3N06/w/400/h/400/theme/dark/icon.png?c=1bfwsmEH20zy443A5e8" style="width:28px;height:28px;border-radius:5px;object-fit:contain;margin-bottom:4px" onerror="this.outerHTML='<div class=mo-icon>🤖</div>'">
             <div class="mo-name">Claude</div>
             <div class="mo-sub">Anthropic</div>
           </div>
           <div class="model-opt on" id="smc-openai" onclick="setSettingsModel('openai')">
-            <div class="mo-icon">⚡</div>
+            <img src="https://cdn.brandfetch.io/idR3duQxYl/w/400/h/400/theme/dark/icon.png?c=1bfwsmEH20zy443A5e8" style="width:28px;height:28px;border-radius:5px;object-fit:contain;margin-bottom:4px" onerror="this.outerHTML='<div class=mo-icon>⚡</div>'">
             <div class="mo-name">GPT-5.4 mini</div>
             <div class="mo-sub">OpenAI · Recomendado</div>
           </div>
           <div class="model-opt" id="smc-gemma" onclick="setSettingsModel('gemma')">
-            <div class="mo-icon">✨</div>
+            <img src="https://cdn.brandfetch.io/idxAg10C0L/w/400/h/400/theme/dark/icon.png?c=1bfwsmEH20zy443A5e8" style="width:28px;height:28px;border-radius:5px;object-fit:contain;margin-bottom:4px" onerror="this.outerHTML='<div class=mo-icon>✨</div>'">
             <div class="mo-name">Gemma 4</div>
             <div class="mo-sub">Google · Gratis</div>
           </div>
@@ -732,6 +734,14 @@ function goToStep(n){
     if(s) s.style.display = i===n?'flex':'none';
   }
   setPip(n,'active');
+  // Hide step1 back/next if visible
+  var s1 = document.getElementById('step1');
+  if(s1){
+    var rows = s1.querySelectorAll('.btn-row');
+    rows.forEach(function(r){
+      if(r.querySelector('#btn2back')||r.querySelector('#btn1back')) r.style.display='none';
+    });
+  }
 }
 
 // STEP 1 — Email + Password
@@ -1095,7 +1105,13 @@ function setHint(code){
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function applyGlossary(html){
-  // replace [term] markers
+  // Render **bold**
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Render *italic*
+  html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  // Render `inline code`
+  html = html.replace(/`([^`]+)`/g, '<code style="background:#21262d;padding:1px 5px;border-radius:3px;font-family:Menlo,monospace;font-size:11px;color:#e6edf3">$1</code>');
+  // replace [term] markers for glossary tooltips
   html=html.replace(/\[([^\]]+)\]/g,function(_,w){
     var def=G[w];
     if(!def)return esc(w);
@@ -1189,21 +1205,28 @@ FLUJO OBLIGATORIO POR CONCEPTO — SEGUILO SIEMPRE, SIN EXCEPCIÓN:
 FASE 1 — EXPLICACIÓN DEL CONCEPTO:
 Explicá qué hace el bloque o función en palabras simples. Usá una analogía. Una sola pregunta al final para verificar que entendió. NO mostrés código todavía.
 
-FASE 2 — EXPLICACIÓN LÍNEA POR LÍNEA (AUTOMÁTICA, sin que el estudiante lo pida):
-Cuando el estudiante entiende el concepto, explicá cada línea del código así:
+FASE 2 — CÓDIGO LÍNEA POR LÍNEA (AUTOMÁTICO, sin preguntar):
+Cuando el estudiante entiende, mostrá CADA LÍNEA en su propio bloque de código seguido de la explicación:
 
-**Línea 1:** [def guardar_palabras(lista_palabras):] → crea la función y recibe la lista como parámetro
-**Línea 2:** [try:] → intenta ejecutar el bloque por si algo falla
-... (una línea a la vez, con el código entre corchetes y la explicación después de →)
-
-Después de explicar TODAS las líneas, mostrá el bloque completo:
 \`\`\`python
-CÓDIGO EXACTO AQUÍ
+def guardar_palabras(lista_palabras):
+\`\`\`
+Crea la función y recibe la lista como parámetro.
+
+\`\`\`python
+    try:
+\`\`\`
+Intenta ejecutar el bloque. Si algo falla, no rompe el programa.
+
+(Así para CADA línea — bloque de código propio + explicación abajo)
+
+Después de TODAS las líneas, mostrá el bloque completo:
+\`\`\`python
+CÓDIGO COMPLETO AQUÍ
 \`\`\`
 Luego: "Escribilo en el editor y apretá Revisar."
 
-FORMATO OBLIGATORIO para cada línea:
-**Línea N:** [código] → explicación simple en español
+REGLA: NUNCA preguntes si querés explicar línea por línea o dar el bloque completo. SIEMPRE hacé ambas cosas en orden.
 
 REGLAS ESTRICTAS:
 - NUNCA preguntes "¿Querés que te dé el código?" — simplemente dalo cuando sea el momento.
@@ -1395,7 +1418,7 @@ document.getElementById('settingsSaveKey').onclick = function(){
   if(!k){ alert('Ingresá una API key.'); return; }
   API_KEY = k;
   if(currentUserId && !currentUserId.startsWith('guest_')){
-    supabase.from('sessions').upsert({user_id:currentUserId, api_key:k, modelo:selectedModel},{onConflict:'user_id'});
+    supabase.from('sessions').upsert({user_id:currentUserId, api_key:k, modelo:selectedModel, updated_at:new Date().toISOString()},{onConflict:'user_id'}).then(function(r){if(r&&r.error)console.error('Key save error:',r.error.message);});
   }
   document.getElementById('settingsKeyInp').value = '';
   document.getElementById('settingsKeyInp').placeholder = '••••••••• (ya guardada)';
@@ -1465,10 +1488,19 @@ document.getElementById('changeKeyBtn').onclick=function(){
   alert('Cambiado a '+(selectedModel==='gemma'?'Gemma 4 (Google)':'Claude (Anthropic)')+' ✅');
 };
 
-// Progress tracking
-var TOTAL_BLOCKS = 13; // total concepts to learn
+// Progress tracking - based on pure code lines written vs total in original
+function countPureLines(code){
+  return code.split('\n').filter(function(l){
+    var t=l.trim();
+    return t.length>0 && !t.startsWith('#');
+  }).length;
+}
+
 function updateProgress(){
-  var pct = Math.min(100, Math.round((hist.filter(function(m){return m.role==='user';}).length / (TOTAL_BLOCKS*2)) * 100));
+  var edCode = document.getElementById('myCode');
+  var written = edCode ? countPureLines(edCode.value) : 0;
+  var total   = userCode ? countPureLines(userCode) : 1;
+  var pct = Math.min(100, Math.round((written/total)*100));
   document.getElementById('progressBar').style.width = pct+'%';
   document.getElementById('progressPct').textContent = pct+'%';
 }
