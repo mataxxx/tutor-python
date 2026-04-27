@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v46</title>
+<title>Tutor IA — Python v47</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -175,7 +175,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v46</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v47</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -497,6 +497,70 @@ function clearSession(){
 
 // ─── SUPABASE MAGIC LINK AUTH + SESSION RESTORE ─────────
 
+
+function proceedAfterLogin(session){
+  var user = session.user;
+  currentUserId = user.id;
+  supabase._token = session.access_token;
+  // Show logged-in badge on step 1
+  var badge=document.createElement('div');
+  badge.style.cssText='background:#0d2f1a;border:1px solid #238636;border-radius:8px;padding:8px 12px;font-size:12px;color:#3fb950;display:flex;align-items:center;justify-content:space-between;gap:8px';
+  badge.innerHTML='<span>✅ <strong>'+user.email+'</strong></span>';
+  var logoutBtn=document.createElement('button');
+  logoutBtn.className='btn btn-ghost';logoutBtn.style.cssText='font-size:11px;padding:2px 8px';
+  logoutBtn.textContent='Salir';
+  logoutBtn.onclick=function(){
+    localStorage.removeItem('sb_session');
+    location.reload();
+  };
+  badge.appendChild(logoutBtn);
+  var s1=document.getElementById('step1');
+  if(s1&&!s1.querySelector('.logged-badge')){
+    badge.classList.add('logged-badge');
+    s1.insertBefore(badge,s1.querySelector('.btn-row'));
+  }
+  // Load saved session from DB
+  loadSessionFromDB(user.id).then(function(saved){
+    if(saved&&saved.api_key){ API_KEY=saved.api_key; if(saved.modelo)selectedModel=saved.modelo; }
+    if(saved&&saved.hist&&saved.hist.length>0){
+      nivel=saved.nivel||'principiante';
+      userCode=saved.user_code||'';
+      hist=saved.hist||[];
+      if(saved.modelo)selectedModel=saved.modelo;
+      goToStep(2);
+      showRestoreBanner(saved);
+    } else {
+      goToStep(2);
+    }
+  });
+}
+
+function showRestoreBanner(saved){
+  var existing=document.getElementById('restoreBanner');
+  if(existing)existing.remove();
+  var rb=document.createElement('div');
+  rb.id='restoreBanner';
+  rb.style.cssText='background:#0d2f1a;border:1px solid #238636;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px;margin-bottom:4px';
+  rb.innerHTML='<div style="font-size:13px;font-weight:600;color:#3fb950">📖 Sesión guardada — '+fmtDate(saved.updated_at)+'</div>'
+    +'<div style="font-size:11px;color:#8b949e">'+saved.hist.length+' mensajes</div>';
+  var row=document.createElement('div');row.style.cssText='display:flex;gap:8px';
+  var btnR=document.createElement('button');
+  btnR.className='btn btn-success';btnR.style.cssText='font-size:12px;padding:6px 14px;flex:1';
+  btnR.textContent='Continuar sesión →';
+  btnR.onclick=function(){restoreAndLaunch(saved.editor_code||'');};
+  var btnN=document.createElement('button');
+  btnN.className='btn btn-ghost';btnN.style.cssText='font-size:12px;padding:6px 14px';
+  btnN.textContent='Nueva sesión';
+  btnN.onclick=function(){
+    supabase.from('sessions').delete().eq('user_id',currentUserId).then(function(){
+      hist=[];userCode='';rb.remove();
+    });
+  };
+  row.appendChild(btnR);row.appendChild(btnN);
+  rb.appendChild(row);
+  var s2=document.getElementById('step2');
+  s2.insertBefore(rb,s2.querySelector('.btn-row'));
+}
 
 async function checkAuthAndRestore(){
   var r = await supabase.auth.getSession();
