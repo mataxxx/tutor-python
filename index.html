@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v65</title>
+<title>Tutor IA — Python v70</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -136,7 +136,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ed-gutter-inner{font-family:'Menlo','Monaco','Courier New',monospace;font-size:13px;line-height:1.65;text-align:right;padding:14px 6px 14px 0;color:#4d5566;white-space:pre;overflow:hidden;height:100%}
 .ed-code-wrap{flex:1;position:relative;overflow:hidden}
 .ed-hl{display:none}
-.ed-ta{position:absolute;inset:0;font-family:'Menlo','Monaco','Courier New',monospace;font-size:13px;line-height:1.65;padding:14px 12px;border:none;outline:none;resize:none;background:transparent;color:#e6edf3;caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;user-select:text;-webkit-user-select:text}
+.ed-indent-guides{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.ed-ta{position:absolute;inset:0;font-family:'Menlo','Monaco','Courier New',monospace;font-size:13px;line-height:1.65;padding:14px 12px;border:none;outline:none;resize:none;background:transparent;color:#e6edf3;caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;user-select:text;-webkit-user-select:text;z-index:2}
 .ed-ta::placeholder{color:#3d444d}
 .hint-overlay{position:absolute;bottom:8px;left:8px;right:8px;background:#0d1f38;border:1px solid #1f6feb;border-radius:8px;padding:10px 14px;font-family:'SF Mono','Fira Code',monospace;font-size:11.5px;color:#79c0ff;white-space:pre-wrap;word-break:break-word;z-index:15;pointer-events:none;display:none;box-shadow:0 4px 16px rgba(0,0,0,.5)}
 .hint-label{font-size:10px;color:#58a6ff;margin-bottom:4px;font-family:sans-serif;font-weight:600;letter-spacing:.03em}
@@ -150,6 +151,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .msg.err{animation:errorBlink 1.5s ease-in-out infinite}
 .ed-ta.has-error{animation:errorBlink 1.5s ease-in-out infinite;border:1px solid #d1242f!important}
 
+
+/* ── SETTINGS PANEL ── */
+.settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;backdrop-filter:blur(4px)}
+.settings-overlay.open{display:flex;align-items:center;justify-content:center}
+.settings-card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:440px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
+.settings-hdr{padding:16px 20px;border-bottom:1px solid #30363d;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.settings-hdr h2{font-size:15px;font-weight:600;color:#e6edf3}
+.settings-close{background:transparent;border:none;color:#6e7681;font-size:20px;cursor:pointer;line-height:1}
+.settings-body{padding:20px;display:flex;flex-direction:column;gap:20px}
+.settings-section{display:flex;flex-direction:column;gap:10px}
+.settings-lbl{font-size:12px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.06em}
+.model-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.model-opt{border:1.5px solid #30363d;border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .2s;background:#0d1117}
+.model-opt:hover{border-color:#58a6ff}
+.model-opt.on{border-color:#1f6feb;background:rgba(31,111,235,.12)}
+.model-opt .mo-icon{font-size:20px;margin-bottom:4px}
+.model-opt .mo-name{font-size:12px;font-weight:600;color:#e6edf3}
+.model-opt .mo-sub{font-size:10px;color:#6e7681;margin-top:2px}
+.key-row{display:flex;gap:8px}
+.key-inp{flex:1;padding:9px 12px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:12px;font-family:'SF Mono',monospace;outline:none}
+.key-inp:focus{border-color:#58a6ff}
+.save-btn{padding:9px 16px;background:#238636;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.save-btn:hover{background:#2ea043}
+.settings-footer{padding:12px 20px;border-top:1px solid #30363d;display:flex;justify-content:flex-end;gap:8px;flex-shrink:0}
+.user-badge{font-size:12px;color:#3fb950;display:flex;align-items:center;gap:6px}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#30363d;border-radius:3px}
@@ -176,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v65</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v70</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -197,7 +223,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <!-- STEP 2: MODEL + API KEY -->
     <div class="step-body" id="step2" style="display:none">
       <div class="step-title">Elegí tu IA</div>
-      <div class="step-sub">Seleccioná el modelo. Tu API key se guarda en la nube — no la tendrás que volver a ingresar.</div>
+      <div class="step-sub">Seleccioná el modelo. Podés cambiar la API key desde ⚙️ Configuración una vez que entres.</div>
       <divdisplay:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
         <div class="model-card sel" id="mc-anthropic" onclick="selectModel('anthropic')">
           <div style="font-size:20px">🤖</div>
@@ -214,11 +240,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">Gemma 4</div>
           <div style="font-size:10px;color:#6e7681;line-height:1.4">Google · Gratis</div>
         </div></div>
-      <div>
-        <div class="field-lbl" id="keyLabel">API Key de Anthropic</div>
-        <input class="field-inp" type="password" id="apiKey" placeholder="sk-ant-api03-...">
-      </div>
-      <div class="helper" id="keyHelper">¿No tenés? → <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com/keys</a></div>
+      <div id="keyLabel" style="display:none"></div>
+      <input type="hidden" id="apiKey" value="">
+      <div id="keyHelper" style="display:none"></div>
       <div class="btn-row">
         <button class="btn btn-ghost" id="btn2back">← Atrás</button>
         <button class="btn btn-primary" id="btn2">Siguiente →</button>
@@ -295,12 +319,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <span id="saveIndicator" style="font-size:11px;color:#3fb950;min-width:70px;text-align:right"></span>
       <!-- Level -->
       <div class="tb-lvl" id="tbLvl">Principiante</div>
-      <!-- Change API key -->
-      <button id="changeKeyBtn" title="Cambiar API key" style="padding:3px 8px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">🔑 API</button>
-      <!-- Logout -->
-      <button id="logoutBtn" title="Cerrar sesión" style="padding:3px 8px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">Salir</button>
-      <!-- New session -->
-      <button id="newSessBtn" style="padding:3px 8px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">Nueva sesión</button>
+      <button id="settingsBtn" style="padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#8b949e;font-size:13px;cursor:pointer;font-family:inherit" title="Configuración">⚙️</button>
+      <!-- keep these for JS compat -->
+      <button id="newSessBtn" style="display:none"></button>
+      <button id="changeKeyBtn" style="display:none"></button>
+      <button id="logoutBtn" style="display:none"></button>
     </div>
   </div>
 
@@ -344,6 +367,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="ed-container" id="edContainer">
           <div class="ed-code-wrap">
             <pre class="ed-hl" id="edHL" aria-hidden="true"></pre>
+            <canvas class="ed-indent-guides" id="edGuides"></canvas>
             <textarea class="ed-ta" id="myCode" spellcheck="false" autocomplete="off" placeholder="# Escribí tu código acá..."></textarea>
             <div class="hint-overlay" id="hintOverlay">
               <div class="hint-label">✏️ Escribí esto:</div>
@@ -355,6 +379,55 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="ed-foot">
         <span class="ed-foot-hint">① Tutor explica → ② Escribís → ③ Revisar</span>
         <button class="rev-btn" id="revBtn">Revisar con tutor ↗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETTINGS PANEL ── -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-card">
+    <div class="settings-hdr">
+      <h2>⚙️ Configuración</h2>
+      <button class="settings-close" id="settingsClose">✕</button>
+    </div>
+    <div class="settings-body">
+      <div class="settings-section">
+        <div class="settings-lbl">Cuenta</div>
+        <div class="user-badge" id="settingsUser">👤 —</div>
+        <button class="btn btn-ghost" id="settingsLogout" style="font-size:12px;padding:6px 12px;align-self:flex-start">Cerrar sesión</button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-lbl">Modelo de IA</div>
+        <div class="model-grid">
+          <div class="model-opt" id="smc-anthropic" onclick="setSettingsModel('anthropic')">
+            <div class="mo-icon">🤖</div>
+            <div class="mo-name">Claude</div>
+            <div class="mo-sub">Anthropic</div>
+          </div>
+          <div class="model-opt on" id="smc-openai" onclick="setSettingsModel('openai')">
+            <div class="mo-icon">⚡</div>
+            <div class="mo-name">GPT-5.4 mini</div>
+            <div class="mo-sub">OpenAI · Recomendado</div>
+          </div>
+          <div class="model-opt" id="smc-gemma" onclick="setSettingsModel('gemma')">
+            <div class="mo-icon">✨</div>
+            <div class="mo-name">Gemma 4</div>
+            <div class="mo-sub">Google · Gratis</div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-lbl" id="settingsKeyLbl">API Key</div>
+        <div class="key-row">
+          <input class="key-inp" type="password" id="settingsKeyInp" placeholder="sk-...">
+          <button class="save-btn" id="settingsSaveKey">Guardar</button>
+        </div>
+        <div style="font-size:11px;color:#6e7681" id="settingsKeyHelp">—</div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-lbl">Sesión</div>
+        <button class="btn btn-ghost" id="settingsNewSess" style="font-size:12px;padding:6px 12px;align-self:flex-start;color:#d1242f;border-color:#d1242f">🗑 Nueva sesión</button>
       </div>
     </div>
   </div>
@@ -765,15 +838,9 @@ function selectModel(m){
 
 document.getElementById('btn2back').onclick=function(){ goToStep(1); };
 document.getElementById('btn2').onclick=function(){
-  var k=document.getElementById('apiKey').value.trim();
-  if(!k){alert('Ingresá tu API key.');return;}
-  if(selectedModel==='anthropic'&&!k.startsWith('sk-')){alert('La key de Anthropic debe empezar con "sk-".');return;}
-  if(selectedModel==='openai'&&!k.startsWith('sk-')){alert('La key de OpenAI debe empezar con "sk-".');return;}
-  if(selectedModel==='gemma'&&!k.startsWith('AIza')){alert('La key de Google debe empezar con "AIza".');return;}
-  API_KEY=k;
-  // Save api_key to Supabase
+  // Save model choice to Supabase
   if(currentUserId&&!currentUserId.startsWith('guest_')){
-    supabase.from('sessions').upsert({user_id:currentUserId,api_key:k,modelo:selectedModel},{onConflict:'user_id'});
+    supabase.from('sessions').upsert({user_id:currentUserId,modelo:selectedModel},{onConflict:'user_id'});
   }
   goToStep(3);
 };
@@ -834,7 +901,7 @@ function analyzeCode(){
     fetch('https://api.openai.com/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+API_KEY},
-      body:JSON.stringify({model:'gpt-5.4-mini',max_tokens:300,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'gpt-5.4-mini',max_completion_tokens:300,messages:[{role:'user',content:prompt}]})
     }).then(function(r){return r.json();})
     .then(function(d){var txt=((d.choices||[])[0]||{}).message&&d.choices[0].message.content||'No se pudo analizar.';box.textContent=txt;})
     .catch(function(){box.textContent='No se pudo conectar. Igual podés continuar.';});
@@ -936,6 +1003,45 @@ function highlightPython(raw){
 
 var RAINBOW=['#e06c75','#e5c07b','#98c379','#56b6c2','#61afef','#c678dd'];
 
+// ── INDENT GUIDES ────────────────────────────────────
+var INDENT_COLORS = ['rgba(224,108,117,0.35)','rgba(229,192,123,0.35)','rgba(152,195,121,0.35)','rgba(86,182,194,0.35)','rgba(97,175,239,0.35)','rgba(198,120,221,0.35)'];
+var CHAR_WIDTH = 7.8; // approx char width for Menlo 13px
+var LINE_H = 1.65 * 13; // line height in px
+var PAD_LEFT = 12; // padding-left of textarea
+var PAD_TOP = 14;  // padding-top
+
+function drawIndentGuides(){
+  var canvas = document.getElementById('edGuides');
+  var ta = document.getElementById('myCode');
+  if(!canvas||!ta) return;
+  var w = ta.clientWidth;
+  var h = ta.clientHeight;
+  canvas.width = w;
+  canvas.height = h;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  var lines = ta.value.split('\n');
+  var scrollTop = ta.scrollTop;
+  var firstLine = Math.floor(scrollTop / LINE_H);
+  var lastLine  = Math.min(lines.length, firstLine + Math.ceil(h/LINE_H) + 2);
+  for(var i=firstLine; i<lastLine; i++){
+    var line = lines[i]||'';
+    var spaces = 0;
+    for(var c=0;c<line.length;c++){if(line[c]===' ')spaces++;else break;}
+    var levels = Math.floor(spaces/4);
+    var y = PAD_TOP + i*LINE_H - scrollTop;
+    for(var lv=0; lv<levels; lv++){
+      var x = PAD_LEFT + lv * 4 * CHAR_WIDTH + 0.5;
+      ctx.strokeStyle = INDENT_COLORS[lv % INDENT_COLORS.length];
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, y + LINE_H);
+      ctx.stroke();
+    }
+  }
+}
+
 function updateEditor(){
   var ta   = document.getElementById('myCode');
   var hl   = document.getElementById('edHL');
@@ -962,6 +1068,7 @@ function syncScroll(){
   var ta=document.getElementById('myCode');
   var gut=document.getElementById('edGutter');
   if(gut) gut.scrollTop=ta.scrollTop;
+  drawIndentGuides();
 }
 
 function updateGutter(){ updateEditor(); }
@@ -1108,7 +1215,7 @@ function callOpenAIAPI(sys, messages, onReply, onError, onDone){
   fetch('https://api.openai.com/v1/chat/completions',{
     method:'POST',
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+API_KEY},
-    body:JSON.stringify({model:'gpt-5.4-mini',max_tokens:700,messages:oaiMessages})
+    body:JSON.stringify({model:'gpt-5.4-mini',max_completion_tokens:700,messages:oaiMessages})
   })
   .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error((e.error&&e.error.message)||'HTTP '+r.status);});return r.json();})
   .then(function(d){
@@ -1205,6 +1312,81 @@ function send(){
   }
 }
 
+// ── SETTINGS PANEL JS ────────────────────────────────
+function openSettings(){
+  // Update user display
+  var userEl = document.getElementById('settingsUser');
+  if(supabase._user) userEl.textContent = '👤 ' + supabase._user.email;
+  else userEl.textContent = '👤 Sin login (solo este dispositivo)';
+  // Sync selected model
+  setSettingsModel(selectedModel, true);
+  // Show current key masked
+  document.getElementById('settingsKeyInp').value = '';
+  document.getElementById('settingsKeyInp').placeholder = API_KEY ? '••••••••• (ya guardada)' : 'sk-...';
+  document.getElementById('settingsOverlay').classList.add('open');
+}
+
+function setSettingsModel(m, silent){
+  ['anthropic','openai','gemma'].forEach(function(x){
+    var el=document.getElementById('smc-'+x);
+    if(el) el.classList.remove('on');
+  });
+  var el=document.getElementById('smc-'+m);
+  if(el) el.classList.add('on');
+  if(!silent){
+    selectedModel = m;
+    var helps = {
+      anthropic: '¿No tenés? → console.anthropic.com/keys',
+      openai:    '¿No tenés? → platform.openai.com/api-keys',
+      gemma:     '¿No tenés? → aistudio.google.com/app/apikey (gratis)'
+    };
+    var labels = {anthropic:'API Key de Anthropic (sk-ant...)', openai:'API Key de OpenAI (sk-proj...)', gemma:'API Key de Google (AIza...)'};
+    document.getElementById('settingsKeyLbl').textContent = labels[m]||'API Key';
+    document.getElementById('settingsKeyHelp').textContent = helps[m]||'';
+    document.getElementById('settingsKeyInp').placeholder = 'sk-...';
+    document.getElementById('settingsKeyInp').value = '';
+  }
+}
+
+document.getElementById('settingsBtn').onclick = openSettings;
+document.getElementById('settingsClose').onclick = function(){
+  document.getElementById('settingsOverlay').classList.remove('open');
+};
+document.getElementById('settingsOverlay').onclick = function(e){
+  if(e.target===this) this.classList.remove('open');
+};
+
+document.getElementById('settingsSaveKey').onclick = function(){
+  var k = document.getElementById('settingsKeyInp').value.trim();
+  if(!k){ alert('Ingresá una API key.'); return; }
+  API_KEY = k;
+  if(currentUserId && !currentUserId.startsWith('guest_')){
+    supabase.from('sessions').upsert({user_id:currentUserId, api_key:k, modelo:selectedModel},{onConflict:'user_id'});
+  }
+  document.getElementById('settingsKeyInp').value = '';
+  document.getElementById('settingsKeyInp').placeholder = '••••••••• (ya guardada)';
+  document.getElementById('tbLvl').style.borderLeft = selectedModel==='gemma'?'3px solid #4285f4':selectedModel==='openai'?'3px solid #10a37f':'3px solid #1f6feb';
+  this.textContent = '✓ Guardado';
+  setTimeout(function(){ document.getElementById('settingsSaveKey').textContent='Guardar'; },2000);
+};
+
+document.getElementById('settingsLogout').onclick = function(){
+  if(confirm('¿Cerrar sesión?')){
+    localStorage.removeItem('sb_session');
+    location.reload();
+  }
+};
+
+document.getElementById('settingsNewSess').onclick = function(){
+  if(confirm('¿Empezar sesión nueva? Se perderá el progreso actual.')){
+    if(currentUserId&&!currentUserId.startsWith('guest_')){
+      supabase.from('sessions').delete().eq('user_id',currentUserId);
+    }
+    localStorage.removeItem('sb_session');
+    location.reload();
+  }
+};
+
 document.getElementById('newSessBtn').onclick=function(){
   if(confirm('¿Empezar sesión nueva? Se perderá el progreso actual.')){clearSession();location.reload();}
 };
@@ -1223,7 +1405,8 @@ document.getElementById('changeKeyBtn').onclick=function(){
   model = model.trim().toLowerCase();
   if(model!=='claude'&&model!=='openai'&&model!=='gemma'){ alert('Solo "claude", "openai" o "gemma".'); return; }
   selectedModel = model==='gemma' ? 'gemma' : model==='openai' ? 'openai' : 'anthropic';
-  var newKey=prompt('Ingresá tu API key para '+(selectedModel==='gemma'?'Google AI Studio (AIza...)':'Anthropic (sk-ant...)' )+':');
+  var keyLabel = selectedModel==='gemma'?'Google AI Studio (AIza...)':selectedModel==='openai'?'OpenAI (sk-proj...)':'Anthropic (sk-ant...)';
+  var newKey=prompt('Ingresá tu API key para '+keyLabel+':');
   if(!newKey) return;
   API_KEY=newKey;
   if(currentUserId&&!currentUserId.startsWith('guest_')){
