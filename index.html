@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v45</title>
+<title>Tutor IA — Python v46</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -175,17 +175,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v45</span></div>
-      <div class="step-sub">Ingresá tu email y te mandamos un link para entrar. Sin contraseña. Tu progreso se guarda automáticamente.</div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v46</span></div>
+      <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
-        <div class="field-lbl">Tu email</div>
+        <div class="field-lbl">Email</div>
         <input class="field-inp" type="email" id="loginEmail" placeholder="tu@email.com">
       </div>
-      <div id="magicMsg" style="display:none;font-size:12px;color:#3fb950;background:#0d2f1a;border:1px solid #238636;border-radius:8px;padding:10px 14px;line-height:1.6"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" id="btnMagic">Enviar magic link →</button>
+      <div>
+        <div class="field-lbl">Contraseña</div>
+        <input class="field-inp" type="password" id="loginPassword" placeholder="mínimo 6 caracteres">
       </div>
-      <div style="font-size:11px;color:#6e7681;text-align:center">¿Ya tenés sesión activa? <a href="#" id="skipLogin" style="color:#58a6ff">Continuar directo →</a></div>
+      <div id="loginMsg" style="display:none;font-size:12px;padding:10px 14px;border-radius:8px;line-height:1.6"></div>
+      <div class="btn-row" style="flex-direction:column;gap:8px">
+        <button class="btn btn-primary" id="btnLogin" style="width:100%">Entrar →</button>
+        <button class="btn btn-ghost" id="btnRegister" style="width:100%;font-size:12px">Crear cuenta nueva</button>
+      </div>
+      <div style="font-size:11px;color:#6e7681;text-align:center"><a href="#" id="skipLogin" style="color:#58a6ff">Continuar sin login (solo este dispositivo)</a></div>
     </div>
 
     <!-- STEP 2: MODEL + API KEY -->
@@ -379,18 +384,7 @@ var supabase = {
       } catch(e){}
       return {data:{session:null}};
     },
-    signInWithOtp: async function(opts){
-      try {
-        var r = await fetch(SUPA_URL+'/auth/v1/otp', {
-          method:'POST',
-          headers:{'Content-Type':'application/json','apikey':SUPA_KEY},
-          body: JSON.stringify({email: opts.email, create_user:true})
-        });
-        var d = await r.json();
-        if(!r.ok) return {error:{message: d.msg||d.error_description||'Error'}};
-        return {data:{}, error:null};
-      } catch(e){ return {error:{message:e.message}}; }
-    },
+
     signOut: async function(){
       localStorage.removeItem('sb_session');
       supabase._token=null; supabase._user=null;
@@ -579,36 +573,74 @@ function goToStep(n){
   setPip(n,'active');
 }
 
-// STEP 1 — Magic link
-document.getElementById('btnMagic').onclick = function(){
-  var email=document.getElementById('loginEmail').value.trim();
-  if(!email||!email.includes('@')){document.getElementById('loginEmail').style.borderColor='#d1242f';return;}
-  var btn=this; btn.disabled=true; btn.textContent='Enviando...';
-  var msgDiv=document.getElementById('magicMsg');
-  supabase.auth.signInWithOtp({email:email,options:{emailRedirectTo:window.location.href}})
-  .then(function(r){
-    if(r.error){
-      msgDiv.style.color='#d1242f';
-      msgDiv.textContent='Error: '+r.error.message;
-      msgDiv.style.display='block';
-      btn.disabled=false;btn.textContent='Enviar magic link →';
-    } else {
-      msgDiv.innerHTML='✅ Link enviado a <strong>'+email+'</strong><br>Revisá tu email y hacé click para entrar.';
-      msgDiv.style.display='block';
-      btn.style.display='none';
-    }
-  });
-};
+// STEP 1 — Email + Password
+function showLoginMsg(text, ok){
+  var msg=document.getElementById('loginMsg');
+  msg.textContent=text;
+  msg.style.background = ok?'#0d2f1a':'#2d1a1a';
+  msg.style.border = ok?'1px solid #238636':'1px solid #d1242f';
+  msg.style.color  = ok?'#3fb950':'#f85149';
+  msg.style.display='block';
+}
 
+async function doAuth(isRegister){
+  var email = document.getElementById('loginEmail').value.trim();
+  var pass  = document.getElementById('loginPassword').value;
+  if(!email||!email.includes('@')){ document.getElementById('loginEmail').style.borderColor='#d1242f'; return; }
+  if(pass.length<6){ showLoginMsg('La contraseña debe tener al menos 6 caracteres.',false); return; }
+
+  var btn = isRegister ? document.getElementById('btnRegister') : document.getElementById('btnLogin');
+  btn.disabled=true; btn.textContent='...';
+
+  var endpoint = isRegister ? '/auth/v1/signup' : '/auth/v1/token?grant_type=password';
+  try {
+    var r = await fetch(SUPA_URL+endpoint, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY},
+      body: JSON.stringify({email:email, password:pass})
+    });
+    var d = await r.json();
+    if(!r.ok){
+      showLoginMsg(d.msg||d.error_description||d.error||'Error al iniciar sesión.',false);
+      btn.disabled=false; btn.textContent=isRegister?'Crear cuenta nueva':'Entrar →';
+      return;
+    }
+    if(isRegister && !d.access_token){
+      showLoginMsg('✅ Cuenta creada. Ahora podés entrar con tu email y contraseña.',true);
+      btn.disabled=false; btn.textContent='Crear cuenta nueva';
+      return;
+    }
+    // Save session
+    var sess = {
+      access_token: d.access_token,
+      refresh_token: d.refresh_token,
+      expires_at: Math.floor(Date.now()/1000) + (d.expires_in||3600),
+      user: d.user || {id: d.id, email: email}
+    };
+    localStorage.setItem('sb_session', JSON.stringify(sess));
+    supabase._token = d.access_token;
+    supabase._user  = sess.user;
+    proceedAfterLogin(sess);
+  } catch(e){
+    showLoginMsg('Error de conexión: '+e.message, false);
+    btn.disabled=false; btn.textContent=isRegister?'Crear cuenta nueva':'Entrar →';
+  }
+}
+
+document.getElementById('btnLogin').onclick    = function(){ doAuth(false); };
+document.getElementById('btnRegister').onclick = function(){ doAuth(true); };
+
+document.getElementById('loginPassword').addEventListener('keydown',function(e){
+  if(e.key==='Enter') doAuth(false);
+});
 document.getElementById('loginEmail').addEventListener('keydown',function(e){
-  if(e.key==='Enter') document.getElementById('btnMagic').click();
+  if(e.key==='Enter') document.getElementById('loginPassword').focus();
 });
 
 document.getElementById('skipLogin').onclick=function(e){
   e.preventDefault();
   supabase.auth.getSession().then(function(r){
     if(r.data&&r.data.session){
-      currentUserId=r.data.session.user.id;
       proceedAfterLogin(r.data.session);
     } else {
       currentUserId='guest_'+Math.random().toString(36).substr(2,9);
@@ -1008,34 +1040,6 @@ function send(){
 document.getElementById('newSessBtn').onclick=function(){if(confirm('¿Empezar sesión nueva? Se perderá el progreso actual.')){clearSession();location.reload();}};updateGutter();
 // Init after everything is defined
 window.addEventListener("DOMContentLoaded", function(){
-  // Check if magic link token is in URL hash
-  var hash = window.location.hash;
-  if(hash && hash.includes('access_token')){
-    try {
-      var params = new URLSearchParams(hash.replace(/^#/,''));
-      var token   = params.get('access_token');
-      var refresh = params.get('refresh_token');
-      var expiry  = params.get('expires_at') || String(Math.floor(Date.now()/1000) + 3600);
-      if(token){
-        // base64url decode — fix padding and char substitution
-        var b64 = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-        while(b64.length % 4) b64 += '=';
-        var payload = JSON.parse(atob(b64));
-        var sess = {
-          access_token:  token,
-          refresh_token: refresh,
-          expires_at:    parseInt(expiry),
-          user: { id: payload.sub, email: payload.email||payload.user_metadata&&payload.user_metadata.email }
-        };
-        localStorage.setItem('sb_session', JSON.stringify(sess));
-        supabase._token = token;
-        supabase._user  = sess.user;
-        // Clean URL so token doesn't show
-        window.history.replaceState({}, document.title, window.location.pathname);
-        console.log('Magic link OK, user:', sess.user.email);
-      }
-    } catch(e){ console.error('Token parse error:', e); }
-  }
   checkAuthAndRestore();
 });
 </script>
