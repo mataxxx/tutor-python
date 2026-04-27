@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v71</title>
+<title>Tutor IA — Python v72</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -202,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v71</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v72</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -1207,9 +1207,13 @@ TÉRMINOS: ponelos entre corchetes para activar tooltips: [librería], [import],
 REGLAS:
 - Explicá desde CERO, no asumas conocimiento previo
 - Una idea por mensaje, máx 6 líneas de texto
-- Feedback concreto al revisar código: señalá línea exacta si hay error
 - Celebrá el progreso con emojis
 - Nivel del estudiante: NIVEL_VAR
+- NUNCA asumas que el estudiante escribió algo que no aparece en el código que te mandó. Si el mensaje dice "Revisá este código:", ese ES todo el código del editor.
+- NUNCA digas que una función está correcta si no la ves en el código enviado.
+- NUNCA avances al siguiente concepto sin haber visto el código correcto del concepto actual.
+- Si falta algo en el código, señalá exactamente qué falta y pedile que lo agregue antes de continuar.
+- Si el código está correcto y completo, celebrá y avanzá.
 
 REGLAS ESPECIALES PARA CÓDIGO:
 - Cuando mostrés código, escribilo SIN alinear los = con espacios extra. Ejemplo correcto: AZUL = "\\033[34m"  (NO: AZUL       = "\\033[34m")
