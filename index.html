@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v54</title>
+<title>Tutor IA — Python v55</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -130,17 +130,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .chat-inp button:disabled{opacity:.4;cursor:not-allowed}
 
 /* editor */
-.ed-wrap{flex:1;display:flex;overflow:hidden;position:relative}
-/* The editor uses the overlay technique:
-   - ed-hl  (pre, behind) renders colorized HTML
-   - ed-ta  (textarea, on top) is transparent so user types on it
-   Both share identical font/size/padding so they align perfectly */
-.ed-container{flex:1;position:relative;overflow:auto;display:flex}
-.ed-gutter{width:42px;background:#161b22;border-right:1px solid #21262d;flex-shrink:0;overflow:hidden;position:relative;z-index:3}
-.ed-gutter-inner{font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;text-align:right;padding:14px 6px 14px 0;color:#4d5566;white-space:pre;overflow:hidden;height:100%}
+.ed-wrap{flex:1;display:flex;overflow:hidden}
+.ed-container{flex:1;display:flex;overflow:hidden}
+.ed-gutter{width:42px;background:#161b22;border-right:1px solid #21262d;flex-shrink:0;overflow:hidden}
+.ed-gutter-inner{font-family:'Menlo','Monaco','Courier New',monospace;font-size:13px;line-height:1.65;text-align:right;padding:14px 6px 14px 0;color:#4d5566;white-space:pre;overflow:hidden;height:100%}
 .ed-code-wrap{flex:1;position:relative;overflow:hidden}
-.ed-hl{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;padding:14px 12px;white-space:pre;word-break:normal;overflow-wrap:normal;pointer-events:none;z-index:1;overflow:hidden;margin:0}
-.ed-ta{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;padding:14px 12px;border:none;outline:none;resize:none;background:rgba(0,0,0,0.01);color:#0d1117;caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;z-index:2;user-select:text;-webkit-user-select:text}
+.ed-hl{display:none}
+.ed-ta{position:absolute;inset:0;font-family:'Menlo','Monaco','Courier New',monospace;font-size:13px;line-height:1.65;padding:14px 12px;border:none;outline:none;resize:none;background:transparent;color:#e6edf3;caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;user-select:text;-webkit-user-select:text}
 .ed-ta::placeholder{color:#3d444d}
 .hint-overlay{position:absolute;bottom:8px;left:8px;right:8px;background:#0d1f38;border:1px solid #1f6feb;border-radius:8px;padding:10px 14px;font-family:'SF Mono','Fira Code',monospace;font-size:11.5px;color:#79c0ff;white-space:pre-wrap;word-break:break-word;z-index:15;pointer-events:none;display:none;box-shadow:0 4px 16px rgba(0,0,0,.5)}
 .hint-label{font-size:10px;color:#58a6ff;margin-bottom:4px;font-family:sans-serif;font-weight:600;letter-spacing:.03em}
@@ -180,7 +176,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v54</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v55</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -936,17 +932,15 @@ function updateEditor(){
     var indent=0;
     for(var c=0;c<line.length;c++){if(line[c]===' ')indent++;else break;}
     var col = indent>0 ? RAINBOW[Math.floor(indent/4)%RAINBOW.length] : '#4d5566';
-    gutHtml += '<span style="color:'+col+'">'+i+'</span>\n';
+    gutHtml += '<div style="color:'+col+';line-height:1.65;font-size:13px">'+i+'</div>';
   }
   gut.innerHTML = gutHtml;
 }
 
 function syncScroll(){
   var ta=document.getElementById('myCode');
-  var hl=document.getElementById('edHL');
   var gut=document.getElementById('edGutter');
-  if(hl)  { hl.scrollTop=ta.scrollTop; hl.scrollLeft=ta.scrollLeft; }
-  if(gut) { gut.scrollTop=ta.scrollTop; }
+  if(gut) gut.scrollTop=ta.scrollTop;
 }
 
 function updateGutter(){ updateEditor(); }
