@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v72</title>
+<title>Tutor IA — Python v73</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -202,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v72</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v73</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -369,10 +369,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             <pre class="ed-hl" id="edHL" aria-hidden="true"></pre>
             <canvas class="ed-indent-guides" id="edGuides"></canvas>
             <textarea class="ed-ta" id="myCode" spellcheck="false" autocomplete="off" placeholder="# Escribí tu código acá..."></textarea>
-            <div class="hint-overlay" id="hintOverlay">
-              <div class="hint-label">✏️ Escribí esto:</div>
-              <span id="hintCode"></span>
-            </div>
+            <div id="hintOverlay" style="display:none"><span id="hintCode"></span></div>
           </div>
         </div>
       </div>
@@ -419,11 +416,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
       <div class="settings-section">
         <div class="settings-lbl" id="settingsKeyLbl">API Key</div>
+        <div id="keyStatus" style="font-size:12px;padding:6px 10px;border-radius:6px;background:#0d2f1a;border:1px solid #238636;color:#3fb950;display:none">✅ Key guardada</div>
         <div class="key-row">
-          <input class="key-inp" type="password" id="settingsKeyInp" placeholder="sk-...">
+          <input class="key-inp" type="password" id="settingsKeyInp" placeholder="Ingresá tu API key...">
           <button class="save-btn" id="settingsSaveKey">Guardar</button>
         </div>
-        <div style="font-size:11px;color:#6e7681" id="settingsKeyHelp">—</div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <div style="font-size:11px;color:#6e7681;flex:1" id="settingsKeyHelp">—</div>
+          <button id="settingsDeleteKey" style="font-size:11px;color:#d1242f;background:transparent;border:none;cursor:pointer;padding:0;display:none">🗑 Borrar key</button>
+        </div>
       </div>
       <div class="settings-section">
         <div class="settings-lbl">Sesión</div>
@@ -1188,12 +1189,21 @@ FLUJO OBLIGATORIO POR CONCEPTO — SEGUILO SIEMPRE, SIN EXCEPCIÓN:
 FASE 1 — EXPLICACIÓN DEL CONCEPTO:
 Explicá qué hace el bloque o función en palabras simples. Usá una analogía. Una sola pregunta al final para verificar que entendió. NO mostrés código todavía.
 
-FASE 2 — CÓDIGO LÍNEA POR LÍNEA:
-Cuando el estudiante entiende, explicá el código línea por línea en texto, luego mostrá el bloque completo en un solo código:
+FASE 2 — EXPLICACIÓN LÍNEA POR LÍNEA (AUTOMÁTICA, sin que el estudiante lo pida):
+Cuando el estudiante entiende el concepto, explicá cada línea del código así:
+
+**Línea 1:** `def guardar_palabras(lista_palabras):` → crea la función y recibe la lista como parámetro
+**Línea 2:** `try:` → intenta ejecutar el bloque por si algo falla
+... (una línea a la vez, con el código en backticks y la explicación después de →)
+
+Después de explicar TODAS las líneas, mostrá el bloque completo:
 \`\`\`python
 CÓDIGO EXACTO AQUÍ
 \`\`\`
-Luego decís: "Escribilo en el editor y apretá Revisar."
+Luego: "Escribilo en el editor y apretá Revisar."
+
+FORMATO OBLIGATORIO para cada línea:
+**Línea N:** `código` → explicación simple en español
 
 REGLAS ESTRICTAS:
 - NUNCA preguntes "¿Querés que te dé el código?" — simplemente dalo cuando sea el momento.
@@ -1333,9 +1343,20 @@ function openSettings(){
   else userEl.textContent = '👤 Sin login (solo este dispositivo)';
   // Sync selected model
   setSettingsModel(selectedModel, true);
-  // Show current key masked
+  // Show key status
+  var keyStatus = document.getElementById('keyStatus');
+  var deleteBtn = document.getElementById('settingsDeleteKey');
+  if(API_KEY){
+    keyStatus.style.display='block';
+    keyStatus.textContent = '✅ Key guardada (' + API_KEY.substring(0,8) + '••••••••)';
+    deleteBtn.style.display='inline';
+    document.getElementById('settingsKeyInp').placeholder = 'Ingresá nueva key para reemplazar...';
+  } else {
+    keyStatus.style.display='none';
+    deleteBtn.style.display='none';
+    document.getElementById('settingsKeyInp').placeholder = 'Ingresá tu API key...';
+  }
   document.getElementById('settingsKeyInp').value = '';
-  document.getElementById('settingsKeyInp').placeholder = API_KEY ? '••••••••• (ya guardada)' : 'sk-...';
   document.getElementById('settingsOverlay').classList.add('open');
 }
 
@@ -1379,8 +1400,23 @@ document.getElementById('settingsSaveKey').onclick = function(){
   document.getElementById('settingsKeyInp').value = '';
   document.getElementById('settingsKeyInp').placeholder = '••••••••• (ya guardada)';
   document.getElementById('tbLvl').style.borderLeft = selectedModel==='gemma'?'3px solid #4285f4':selectedModel==='openai'?'3px solid #10a37f':'3px solid #1f6feb';
+  document.getElementById('keyStatus').style.display='block';
+  document.getElementById('keyStatus').textContent = '✅ Key guardada (' + k.substring(0,8) + '••••••••)';
+  document.getElementById('settingsDeleteKey').style.display='inline';
   this.textContent = '✓ Guardado';
   setTimeout(function(){ document.getElementById('settingsSaveKey').textContent='Guardar'; },2000);
+};
+
+document.getElementById('settingsDeleteKey').onclick = function(){
+  if(!confirm('¿Borrar la API key guardada?')) return;
+  API_KEY = '';
+  if(currentUserId&&!currentUserId.startsWith('guest_')){
+    supabase.from('sessions').upsert({user_id:currentUserId, api_key:''},{onConflict:'user_id'});
+  }
+  document.getElementById('keyStatus').style.display='none';
+  document.getElementById('settingsDeleteKey').style.display='none';
+  document.getElementById('settingsKeyInp').value='';
+  document.getElementById('settingsKeyInp').placeholder='Ingresá tu API key...';
 };
 
 document.getElementById('settingsLogout').onclick = function(){
