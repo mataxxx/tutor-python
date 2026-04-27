@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v82</title>
+<title>Tutor IA — Python v83</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -13,10 +13,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
    SETUP WIZARD  (steps 1-3)
 ════════════════════════════════ */
 #wizard{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
-.card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:560px;max-height:90vh;display:flex;flex-direction:column;overflow-y:auto}
+.card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:560px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
 
 /* step header */
-.step-bar{display:flex;padding:20px 24px 0;gap:8px;align-items:center}
+.step-bar{display:flex;padding:20px 24px 0;gap:8px;align-items:center;flex-shrink:0}
 .step-pip{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .3s}
 .step-pip.done{background:#238636;color:#fff}
 .step-pip.active{background:#1f6feb;color:#fff}
@@ -24,7 +24,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .step-line{flex:1;height:2px;border-radius:2px;background:#21262d}
 .step-line.done{background:#238636}
 
-.step-body{padding:28px 24px 32px;display:flex;flex-direction:column;gap:18px}
+.step-body{padding:24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
 .step-title{font-size:17px;font-weight:600;color:#e6edf3}
 .step-sub{font-size:13px;color:#8b949e;line-height:1.6}
 
@@ -202,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v82</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v83</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -573,8 +573,8 @@ function proceedAfterLogin(session){
       userCode=saved.user_code||'';
       hist=saved.hist||[];
       if(saved.modelo)selectedModel=saved.modelo;
-      goToStep(2);
-      showRestoreBanner(saved);
+      // Auto-restore directly without showing wizard steps
+      restoreAndLaunch(saved.editor_code||'');
     } else {
       goToStep(2);
     }
