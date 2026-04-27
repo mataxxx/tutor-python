@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v73</title>
+<title>Tutor IA — Python v76</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -13,7 +13,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
    SETUP WIZARD  (steps 1-3)
 ════════════════════════════════ */
 #wizard{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
-.card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:560px;display:flex;flex-direction:column;overflow:hidden}
+.card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:560px;display:flex;flex-direction:column;overflow:hidden;padding-bottom:8px}
 
 /* step header */
 .step-bar{display:flex;padding:20px 24px 0;gap:8px;align-items:center}
@@ -24,7 +24,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .step-line{flex:1;height:2px;border-radius:2px;background:#21262d}
 .step-line.done{background:#238636}
 
-.step-body{padding:28px 24px 24px;display:flex;flex-direction:column;gap:18px}
+.step-body{padding:28px 24px 32px;display:flex;flex-direction:column;gap:18px}
 .step-title{font-size:17px;font-weight:600;color:#e6edf3}
 .step-sub{font-size:13px;color:#8b949e;line-height:1.6}
 
@@ -66,7 +66,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .level-card .lc-desc{font-size:11px;color:#6e7681;line-height:1.4}
 
 /* buttons */
-.btn-row{display:flex;gap:8px;justify-content:flex-end}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;padding:4px 0 2px}
 .btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
 .btn-primary{background:#1f6feb;color:#fff}
 .btn-primary:hover{background:#388bfd}
@@ -202,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v73</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v76</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -1192,9 +1192,9 @@ Explicá qué hace el bloque o función en palabras simples. Usá una analogía.
 FASE 2 — EXPLICACIÓN LÍNEA POR LÍNEA (AUTOMÁTICA, sin que el estudiante lo pida):
 Cuando el estudiante entiende el concepto, explicá cada línea del código así:
 
-**Línea 1:** `def guardar_palabras(lista_palabras):` → crea la función y recibe la lista como parámetro
-**Línea 2:** `try:` → intenta ejecutar el bloque por si algo falla
-... (una línea a la vez, con el código en backticks y la explicación después de →)
+**Línea 1:** [def guardar_palabras(lista_palabras):] → crea la función y recibe la lista como parámetro
+**Línea 2:** [try:] → intenta ejecutar el bloque por si algo falla
+... (una línea a la vez, con el código entre corchetes y la explicación después de →)
 
 Después de explicar TODAS las líneas, mostrá el bloque completo:
 \`\`\`python
@@ -1203,7 +1203,7 @@ CÓDIGO EXACTO AQUÍ
 Luego: "Escribilo en el editor y apretá Revisar."
 
 FORMATO OBLIGATORIO para cada línea:
-**Línea N:** `código` → explicación simple en español
+**Línea N:** [código] → explicación simple en español
 
 REGLAS ESTRICTAS:
 - NUNCA preguntes "¿Querés que te dé el código?" — simplemente dalo cuando sea el momento.
