@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v78</title>
+<title>Tutor IA — Python v79</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -13,7 +13,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
    SETUP WIZARD  (steps 1-3)
 ════════════════════════════════ */
 #wizard{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
-.card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:560px;display:flex;flex-direction:column;overflow:hidden}
+.card{background:#161b22;border:1px solid #30363d;border-radius:14px;width:560px;max-height:90vh;display:flex;flex-direction:column;overflow-y:auto}
 
 /* step header */
 .step-bar{display:flex;padding:20px 24px 0;gap:8px;align-items:center}
@@ -202,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v78</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v79</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -849,11 +849,15 @@ function selectModel(m){
 
 document.getElementById('btn2back').onclick=function(){ goToStep(1); };
 document.getElementById('btn2').onclick=function(){
-  // Save model choice to Supabase
   if(currentUserId&&!currentUserId.startsWith('guest_')){
     supabase.from('sessions').upsert({user_id:currentUserId,modelo:selectedModel},{onConflict:'user_id'});
   }
-  goToStep(3);
+  // If we have saved session data, restore directly
+  if(hist && hist.length > 0 && userCode){
+    restoreAndLaunch(document.getElementById('myCode') ? document.getElementById('myCode').value : '');
+  } else {
+    goToStep(3);
+  }
 };
 
 // STEP 3 — Code
