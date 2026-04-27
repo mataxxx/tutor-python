@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v49</title>
+<title>Tutor IA — Python v50</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -137,17 +137,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
    Both share identical font/size/padding so they align perfectly */
 .ed-container{flex:1;position:relative;overflow:auto;display:flex}
 .ed-gutter{width:42px;background:#161b22;border-right:1px solid #21262d;flex-shrink:0;overflow:hidden;position:relative;z-index:3}
-.ed-gutter-inner{font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;text-align:right;padding:14px 6px 14px 0;color:#4d5566;white-space:pre;overflow:hidden;height:100%}
+.ed-gutter-inner{font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;text-align:right;padding:14px 6px 14px 0;color:#4d5566;white-space:pre;overflow:hidden;height:100%}
 .ed-code-wrap{flex:1;position:relative;overflow:hidden}
-.ed-hl{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;padding:14px 12px;white-space:pre;word-break:normal;overflow-wrap:normal;pointer-events:none;z-index:1;overflow:hidden;margin:0}
-.ed-ta{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:11.5px;line-height:1.6rem;padding:14px 12px;border:none;outline:none;resize:none;background:transparent;color:#0d1117;caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;z-index:2;user-select:text;-webkit-user-select:text}
+.ed-hl{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;padding:14px 12px;white-space:pre;word-break:normal;overflow-wrap:normal;pointer-events:none;z-index:1;overflow:hidden;margin:0}
+.ed-ta{position:absolute;inset:0;font-family:'SF Mono','Courier New',monospace;font-size:12.5px;line-height:1.7rem;padding:14px 12px;border:none;outline:none;resize:none;background:rgba(0,0,0,0.01);color:rgba(255,255,255,0.08);caret-color:#58a6ff;tab-size:4;white-space:pre;overflow-wrap:normal;overflow:auto;z-index:2;user-select:text;-webkit-user-select:text}
 .ed-ta::placeholder{color:#3d444d}
-.hint-overlay{position:absolute;bottom:8px;left:6px;right:6px;background:rgba(13,17,23,.92);border:1px solid #1f6feb;border-radius:8px;padding:8px 12px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#79c0ff;white-space:pre;z-index:15;pointer-events:none;display:none;backdrop-filter:blur(4px);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.hint-overlay{position:absolute;bottom:8px;left:8px;right:8px;background:#0d1f38;border:1px solid #1f6feb;border-radius:8px;padding:10px 14px;font-family:'SF Mono','Fira Code',monospace;font-size:11.5px;color:#79c0ff;white-space:pre-wrap;word-break:break-word;z-index:15;pointer-events:none;display:none;box-shadow:0 4px 16px rgba(0,0,0,.5)}
 .hint-label{font-size:10px;color:#58a6ff;margin-bottom:4px;font-family:sans-serif;font-weight:600;letter-spacing:.03em}
 .ed-foot{padding:6px 12px;border-top:1px solid #30363d;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#161b22}
 .ed-foot-hint{font-size:10px;color:#3d444d;font-family:monospace}
 .rev-btn{font-size:11px;padding:4px 12px;border-radius:6px;background:#238636;color:#fff;border:none;cursor:pointer;font-family:inherit;font-weight:500}
 .rev-btn:hover{background:#2ea043}
+
+
+@keyframes errorBlink{0%,100%{background:#2d0000}50%{background:#1a0000}}
+.msg.err{animation:errorBlink 1.5s ease-in-out infinite}
+.ed-ta.has-error{animation:errorBlink 1.5s ease-in-out infinite;border:1px solid #d1242f!important}
 
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -175,7 +180,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v49</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v50</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -275,11 +280,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="topbar">
     <div>
       <div class="tb-title" id="tbTitle">Tutor IA</div>
-      <div class="tb-sub">Reconstruí tu código desde cero, guiado paso a paso</div>
+      <div class="tb-sub" id="tbSub">Reconstruí tu código desde cero</div>
     </div>
-    <div class="tb-lvl" id="tbLvl">Principiante</div>
-    <span id="saveIndicator" style="font-size:11px;color:#3fb950;margin-left:8px;min-width:80px"></span>
-    <button id="newSessBtn" style="padding:3px 10px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">Nueva sesión</button>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      <!-- Progress -->
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:11px;color:#6e7681">Progreso:</span>
+        <div style="width:80px;height:6px;background:#21262d;border-radius:3px;overflow:hidden">
+          <div id="progressBar" style="height:100%;width:0%;background:#238636;border-radius:3px;transition:width .5s"></div>
+        </div>
+        <span id="progressPct" style="font-size:11px;color:#3fb950;min-width:28px">0%</span>
+      </div>
+      <!-- Save status -->
+      <span id="saveIndicator" style="font-size:11px;color:#3fb950;min-width:70px;text-align:right"></span>
+      <!-- Level -->
+      <div class="tb-lvl" id="tbLvl">Principiante</div>
+      <!-- Change API key -->
+      <button id="changeKeyBtn" title="Cambiar API key" style="padding:3px 8px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">🔑 API</button>
+      <!-- Logout -->
+      <button id="logoutBtn" title="Cerrar sesión" style="padding:3px 8px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">Salir</button>
+      <!-- New session -->
+      <button id="newSessBtn" style="padding:3px 8px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#6e7681;font-size:11px;cursor:pointer;font-family:inherit">Nueva sesión</button>
+    </div>
   </div>
 
   <div class="panels">
@@ -1111,7 +1133,47 @@ function send(){
   }
 }
 
-document.getElementById('newSessBtn').onclick=function(){if(confirm('¿Empezar sesión nueva? Se perderá el progreso actual.')){clearSession();location.reload();}};updateGutter();
+document.getElementById('newSessBtn').onclick=function(){
+  if(confirm('¿Empezar sesión nueva? Se perderá el progreso actual.')){clearSession();location.reload();}
+};
+
+document.getElementById('logoutBtn').onclick=function(){
+  if(confirm('¿Cerrar sesión?')){
+    localStorage.removeItem('sb_session');
+    clearSession();
+    location.reload();
+  }
+};
+
+document.getElementById('changeKeyBtn').onclick=function(){
+  var newKey=prompt('Ingresá tu nueva API key:');
+  if(!newKey) return;
+  API_KEY=newKey;
+  if(currentUserId&&!currentUserId.startsWith('guest_')){
+    supabase.from('sessions').upsert({user_id:currentUserId,api_key:newKey},{onConflict:'user_id'});
+  }
+  alert('API key actualizada.');
+};
+
+// Progress tracking
+var TOTAL_BLOCKS = 13; // total concepts to learn
+function updateProgress(){
+  var pct = Math.min(100, Math.round((hist.filter(function(m){return m.role==='user';}).length / (TOTAL_BLOCKS*2)) * 100));
+  document.getElementById('progressBar').style.width = pct+'%';
+  document.getElementById('progressPct').textContent = pct+'%';
+}
+
+// Override saveSession to also update progress and indicator
+var _origSave = saveSession;
+saveSession = function(){
+  _origSave();
+  updateProgress();
+  var ind=document.getElementById('saveIndicator');
+  if(ind) ind.textContent='💾 guardando...';
+  setTimeout(function(){if(ind) ind.textContent='✓ guardado';},2500);
+};
+
+updateEditor();
 // Init after everything is defined
 window.addEventListener("DOMContentLoaded", function(){
   checkAuthAndRestore();
