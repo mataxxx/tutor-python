@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v84</title>
+<title>Tutor IA — Python v85</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -202,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v84</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v85</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -616,21 +616,36 @@ async function checkAuthAndRestore(){
 }
 
 function restoreAndLaunch(editorCode){
-  document.getElementById('wizard').style.display = 'none';
-  document.getElementById('app').style.display    = 'flex';
-  document.getElementById('refPre').textContent   = userCode;
-  var lvlLabels = {principiante:'🌱 Principiante', intermedio:'⚡ Intermedio', avanzado:'🔥 Avanzado'};
-  document.getElementById('tbLvl').textContent  = lvlLabels[nivel] || nivel;
-  document.getElementById('tbLvl').style.borderLeft = selectedModel==='gemma' ? '3px solid #4285f4' : '3px solid #1f6feb';
-  if(editorCode){ document.getElementById('myCode').value = editorCode; }
+  try {
+    var wizEl = document.getElementById('wizard');
+    var appEl = document.getElementById('app');
+    if(wizEl) wizEl.style.display = 'none';
+    if(appEl) { appEl.style.display = 'flex'; }
+    else { console.error('APP DIV NOT FOUND'); return; }
+    var refEl = document.getElementById('refPre');
+    if(refEl) refEl.textContent = userCode||'';
+    var lvlLabels = {principiante:'🌱 Principiante', intermedio:'⚡ Intermedio', avanzado:'🔥 Avanzado'};
+    var lvlEl = document.getElementById('tbLvl');
+    if(lvlEl){ lvlEl.textContent = lvlLabels[nivel]||nivel; lvlEl.style.borderLeft = selectedModel==='gemma'?'3px solid #4285f4':selectedModel==='openai'?'3px solid #10a37f':'3px solid #1f6feb'; }
+    var codeEl = document.getElementById('myCode');
+    if(editorCode && codeEl){ codeEl.value = editorCode; }
   hist.forEach(function(m){ addMsg(m.role==='user'?'u':'t', m.content); });
-  var wb = document.createElement('div');
-  wb.style.cssText = 'text-align:center;font-size:11px;color:#8c959f;padding:6px;border-top:1px dashed #e1e4e8;margin-top:4px';
-  wb.textContent = '↩️ Sesión restaurada';
-  document.getElementById('msgs').appendChild(wb);
-  document.getElementById('msgs').scrollTop = 99999;
-  document.getElementById('userTxt').focus();
-  updateEditor();
+    var wb = document.createElement('div');
+    wb.style.cssText = 'text-align:center;font-size:11px;color:#8c959f;padding:6px;border-top:1px dashed #e1e4e8;margin-top:4px';
+    wb.textContent = '↩️ Sesión restaurada';
+    var msgsEl = document.getElementById('msgs');
+    if(msgsEl){ msgsEl.appendChild(wb); msgsEl.scrollTop=99999; }
+    var txtEl = document.getElementById('userTxt');
+    if(txtEl) txtEl.focus();
+    try{ updateEditor(); }catch(e){ console.warn('updateEditor error:',e); }
+  } catch(err) {
+    console.error('restoreAndLaunch failed:', err);
+    // Fallback: show wizard from beginning
+    var appEl2 = document.getElementById('app');
+    if(appEl2) appEl2.style.display='flex';
+    var wizEl2 = document.getElementById('wizard');
+    if(wizEl2) wizEl2.style.display='none';
+  }
 }
 
 // Handle redirect back from magic link
