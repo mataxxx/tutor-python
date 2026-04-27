@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v79</title>
+<title>Tutor IA — Python v82</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -202,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v79</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v82</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -227,17 +227,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="step-sub">Seleccioná el modelo. Podés cambiar la API key desde ⚙️ Configuración una vez que entres.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
         <div class="model-card sel" id="mc-anthropic" onclick="selectModel('anthropic')">
-          <img src="https://cdn.brandfetch.io/idmJWF3N06/w/400/h/400/theme/dark/icon.png" style="width:32px;height:32px;border-radius:6px;object-fit:contain" onerror="this.style.display='none'">
+          <div style="width:32px;height:32px;border-radius:6px;background:#d4a27f;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#1a0a00">A</div>
           <div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">Claude</div>
           <div style="font-size:10px;color:#6e7681;line-height:1.4">Anthropic · Sonnet</div>
         </div>
         <div class="model-card" id="mc-openai" onclick="selectModel('openai')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg" style="width:32px;height:32px;object-fit:contain;filter:invert(1)" onerror="this.style.display='none'">
+          <div style="width:30px;height:30px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#000;margin-bottom:4px">●</div>
           <div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">GPT-5.4 mini</div>
           <div style="font-size:10px;color:#6e7681;line-height:1.4">OpenAI · Recomendado</div>
         </div>
         <div class="model-card" id="mc-gemma" onclick="selectModel('gemma')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" style="width:32px;height:16px;object-fit:contain" onerror="this.style.display='none'">
+          <div style="width:30px;height:30px;border-radius:6px;background:linear-gradient(135deg,#4285f4,#34a853,#fbbc04,#ea4335);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;margin-bottom:4px">G</div>
           <div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">Gemma 4</div>
           <div style="font-size:10px;color:#6e7681;line-height:1.4">Google · Gratis</div>
         </div>
@@ -378,59 +378,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="ed-foot">
         <span class="ed-foot-hint">① Tutor explica → ② Escribís → ③ Revisar</span>
         <button class="rev-btn" id="revBtn">Revisar con tutor ↗</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── SETTINGS PANEL ── -->
-<div class="settings-overlay" id="settingsOverlay">
-  <div class="settings-card">
-    <div class="settings-hdr">
-      <h2>⚙️ Configuración</h2>
-      <button class="settings-close" id="settingsClose">✕</button>
-    </div>
-    <div class="settings-body">
-      <div class="settings-section">
-        <div class="settings-lbl">Cuenta</div>
-        <div class="user-badge" id="settingsUser">👤 —</div>
-        <button class="btn btn-ghost" id="settingsLogout" style="font-size:12px;padding:6px 12px;align-self:flex-start">Cerrar sesión</button>
-      </div>
-      <div class="settings-section">
-        <div class="settings-lbl">Modelo de IA</div>
-        <div class="model-grid">
-          <div class="model-opt" id="smc-anthropic" onclick="setSettingsModel('anthropic')">
-            <img src="https://cdn.brandfetch.io/idmJWF3N06/w/400/h/400/theme/dark/icon.png?c=1bfwsmEH20zy443A5e8" style="width:28px;height:28px;border-radius:5px;object-fit:contain;margin-bottom:4px" onerror="this.outerHTML='<div class=mo-icon>🤖</div>'">
-            <div class="mo-name">Claude</div>
-            <div class="mo-sub">Anthropic</div>
-          </div>
-          <div class="model-opt on" id="smc-openai" onclick="setSettingsModel('openai')">
-            <img src="https://cdn.brandfetch.io/idR3duQxYl/w/400/h/400/theme/dark/icon.png?c=1bfwsmEH20zy443A5e8" style="width:28px;height:28px;border-radius:5px;object-fit:contain;margin-bottom:4px" onerror="this.outerHTML='<div class=mo-icon>⚡</div>'">
-            <div class="mo-name">GPT-5.4 mini</div>
-            <div class="mo-sub">OpenAI · Recomendado</div>
-          </div>
-          <div class="model-opt" id="smc-gemma" onclick="setSettingsModel('gemma')">
-            <img src="https://cdn.brandfetch.io/idxAg10C0L/w/400/h/400/theme/dark/icon.png?c=1bfwsmEH20zy443A5e8" style="width:28px;height:28px;border-radius:5px;object-fit:contain;margin-bottom:4px" onerror="this.outerHTML='<div class=mo-icon>✨</div>'">
-            <div class="mo-name">Gemma 4</div>
-            <div class="mo-sub">Google · Gratis</div>
-          </div>
-        </div>
-      </div>
-      <div class="settings-section">
-        <div class="settings-lbl" id="settingsKeyLbl">API Key</div>
-        <div id="keyStatus" style="font-size:12px;padding:6px 10px;border-radius:6px;background:#0d2f1a;border:1px solid #238636;color:#3fb950;display:none">✅ Key guardada</div>
-        <div class="key-row">
-          <input class="key-inp" type="password" id="settingsKeyInp" placeholder="Ingresá tu API key...">
-          <button class="save-btn" id="settingsSaveKey">Guardar</button>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:4px">
-          <div style="font-size:11px;color:#6e7681;flex:1" id="settingsKeyHelp">—</div>
-          <button id="settingsDeleteKey" style="font-size:11px;color:#d1242f;background:transparent;border:none;cursor:pointer;padding:0;display:none">🗑 Borrar key</button>
-        </div>
-      </div>
-      <div class="settings-section">
-        <div class="settings-lbl">Sesión</div>
-        <button class="btn btn-ghost" id="settingsNewSess" style="font-size:12px;padding:6px 12px;align-self:flex-start;color:#d1242f;border-color:#d1242f">🗑 Nueva sesión</button>
       </div>
     </div>
   </div>
@@ -616,7 +563,7 @@ function proceedAfterLogin(session){
   var s1=document.getElementById('step1');
   if(s1&&!s1.querySelector('.logged-badge')){
     badge.classList.add('logged-badge');
-    s1.insertBefore(badge,s1.querySelector('.btn-row'));
+  var s1=document.getElementById('step1');var btnRow1=s1&&s1.querySelector('.btn-row');if(btnRow1)s1.insertBefore(badge,btnRow1);else if(s1)s1.appendChild(badge);
   }
   // Load saved session from DB
   loadSessionFromDB(user.id).then(function(saved){
@@ -658,7 +605,7 @@ function showRestoreBanner(saved){
   row.appendChild(btnR);row.appendChild(btnN);
   rb.appendChild(row);
   var s2=document.getElementById('step2');
-  s2.insertBefore(rb,s2.querySelector('.btn-row'));
+  var s2=document.getElementById('step2');var btnRow2=s2&&s2.querySelector('.btn-row');if(btnRow2)s2.insertBefore(rb,btnRow2);else if(s2)s2.appendChild(rb);
 }
 
 async function checkAuthAndRestore(){
@@ -734,14 +681,9 @@ function goToStep(n){
     if(s) s.style.display = i===n?'flex':'none';
   }
   setPip(n,'active');
-  // Hide step1 back/next if visible
-  var s1 = document.getElementById('step1');
-  if(s1){
-    var rows = s1.querySelectorAll('.btn-row');
-    rows.forEach(function(r){
-      if(r.querySelector('#btn2back')||r.querySelector('#btn1back')) r.style.display='none';
-    });
-  }
+  // Scroll card to top when switching steps
+  var card = document.querySelector('.card');
+  if(card) card.scrollTop=0;
 }
 
 // STEP 1 — Email + Password
@@ -1364,36 +1306,36 @@ function send(){
 
 // ── SETTINGS PANEL JS ────────────────────────────────
 function openSettings(){
-  // Update user display
-  var userEl = document.getElementById('settingsUser');
-  if(supabase._user) userEl.textContent = '👤 ' + supabase._user.email;
-  else userEl.textContent = '👤 Sin login (solo este dispositivo)';
-  // Sync selected model
-  setSettingsModel(selectedModel, true);
-  // Show key status
-  var keyStatus = document.getElementById('keyStatus');
-  var deleteBtn = document.getElementById('settingsDeleteKey');
+  createSettingsOverlay();
+  var userEl=document.getElementById('settingsUser');
+  if(supabase._user) userEl.textContent='👤 '+supabase._user.email;
+  else userEl.textContent='👤 Sin login (solo este dispositivo)';
+  setSettingsModel(selectedModel,true);
+  var ks=document.getElementById('keyStatus');
+  var dk=document.getElementById('settingsDeleteKey');
   if(API_KEY){
-    keyStatus.style.display='block';
-    keyStatus.textContent = '✅ Key guardada (' + API_KEY.substring(0,8) + '••••••••)';
-    deleteBtn.style.display='inline';
-    document.getElementById('settingsKeyInp').placeholder = 'Ingresá nueva key para reemplazar...';
+    ks.style.display='block'; ks.textContent='✅ Key guardada ('+API_KEY.substring(0,8)+'••••••••)';
+    if(dk) dk.style.display='inline';
+    document.getElementById('settingsKeyInp').placeholder='Ingresá nueva key para reemplazar...';
   } else {
-    keyStatus.style.display='none';
-    deleteBtn.style.display='none';
-    document.getElementById('settingsKeyInp').placeholder = 'Ingresá tu API key...';
+    ks.style.display='none'; if(dk) dk.style.display='none';
+    document.getElementById('settingsKeyInp').placeholder='Ingresá tu API key...';
   }
-  document.getElementById('settingsKeyInp').value = '';
-  document.getElementById('settingsOverlay').classList.add('open');
+  document.getElementById('settingsKeyInp').value='';
+  _sOverlay.style.display='flex';
 }
 
 function setSettingsModel(m, silent){
+  if(!silent) selectedModel=m;
   ['anthropic','openai','gemma'].forEach(function(x){
     var el=document.getElementById('smc-'+x);
-    if(el) el.classList.remove('on');
+    if(!el) return;
+    if(x===m){
+      el.style.borderColor='#1f6feb'; el.style.background='rgba(31,111,235,.1)';
+    } else {
+      el.style.borderColor='#30363d'; el.style.background='#0d1117';
+    }
   });
-  var el=document.getElementById('smc-'+m);
-  if(el) el.classList.add('on');
   if(!silent){
     selectedModel = m;
     var helps = {
@@ -1409,12 +1351,82 @@ function setSettingsModel(m, silent){
   }
 }
 
+// Create settings overlay dynamically to avoid HTML nesting issues
+var _sOverlay = null;
+function createSettingsOverlay(){
+  if(_sOverlay) return;
+  var el = document.createElement('div');
+  el.id = 'settingsOverlay';
+  el.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+  el.innerHTML = '<div style="background:#161b22;border:1px solid #30363d;border-radius:14px;width:440px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column">'
+    + '<div style="padding:16px 20px;border-bottom:1px solid #30363d;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">'
+    + '<h2 style="font-size:15px;font-weight:600;color:#e6edf3">⚙️ Configuración</h2>'
+    + '<button id="settingsClose" style="background:transparent;border:none;color:#6e7681;font-size:20px;cursor:pointer">✕</button>'
+    + '</div>'
+    + '<div style="padding:20px;display:flex;flex-direction:column;gap:20px">'
+    // Account
+    + '<div style="display:flex;flex-direction:column;gap:8px">'
+    + '<div style="font-size:12px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.06em">Cuenta</div>'
+    + '<div id="settingsUser" style="font-size:12px;color:#3fb950">👤 —</div>'
+    + '<button id="settingsLogout" style="font-size:12px;padding:6px 12px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#8b949e;cursor:pointer;font-family:inherit;align-self:flex-start">Cerrar sesión</button>'
+    + '</div>'
+    // Model
+    + '<div style="display:flex;flex-direction:column;gap:10px">'
+    + '<div style="font-size:12px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.06em">Modelo de IA</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="sModelGrid">'
+    + '<div id="smc-anthropic" onclick="setSettingsModel('anthropic')" style="border:1.5px solid #30363d;border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;background:#0d1117"><div style="font-size:20px;font-weight:800;color:#d4a27f">A</div><div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">Claude</div><div style="font-size:10px;color:#6e7681">Anthropic</div></div>'
+    + '<div id="smc-openai" onclick="setSettingsModel('openai')" style="border:1.5px solid #1f6feb;border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;background:rgba(31,111,235,.1)"><div style="font-size:20px;font-weight:800;color:#fff">●</div><div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">GPT-5.4 mini</div><div style="font-size:10px;color:#6e7681">OpenAI</div></div>'
+    + '<div id="smc-gemma" onclick="setSettingsModel('gemma')" style="border:1.5px solid #30363d;border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;background:#0d1117"><div style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#4285f4,#34a853);-webkit-background-clip:text;-webkit-text-fill-color:transparent">G</div><div style="font-size:12px;font-weight:600;color:#e6edf3;margin:4px 0">Gemma 4</div><div style="font-size:10px;color:#6e7681">Google · Gratis</div></div>'
+    + '</div></div>'
+    // API Key
+    + '<div style="display:flex;flex-direction:column;gap:8px">'
+    + '<div id="settingsKeyLbl" style="font-size:12px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.06em">API Key</div>'
+    + '<div id="keyStatus" style="display:none;font-size:12px;padding:6px 10px;border-radius:6px;background:#0d2f1a;border:1px solid #238636;color:#3fb950">✅ Key guardada</div>'
+    + '<div style="display:flex;gap:8px"><input id="settingsKeyInp" type="password" placeholder="Ingresá tu API key..." style="flex:1;padding:9px 12px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:12px;font-family:Menlo,monospace;outline:none">'
+    + '<button id="settingsSaveKey" style="padding:9px 16px;background:#238636;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Guardar</button></div>'
+    + '<div style="display:flex;gap:8px;align-items:center"><div id="settingsKeyHelp" style="font-size:11px;color:#6e7681;flex:1">—</div>'
+    + '<button id="settingsDeleteKey" style="display:none;font-size:11px;color:#d1242f;background:transparent;border:none;cursor:pointer;padding:0">🗑 Borrar key</button></div>'
+    + '</div>'
+    // New session
+    + '<div style="display:flex;flex-direction:column;gap:8px">'
+    + '<div style="font-size:12px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.06em">Sesión</div>'
+    + '<button id="settingsNewSess" style="font-size:12px;padding:6px 12px;border-radius:6px;border:1px solid #d1242f;background:transparent;color:#d1242f;cursor:pointer;font-family:inherit;align-self:flex-start">🗑 Nueva sesión</button>'
+    + '</div>'
+    + '</div></div>';
+  document.body.appendChild(el);
+  _sOverlay = el;
+  // Wire up events
+  document.getElementById('settingsClose').onclick = function(){ _sOverlay.style.display='none'; };
+  _sOverlay.onclick = function(e){ if(e.target===_sOverlay) _sOverlay.style.display='none'; };
+  document.getElementById('settingsLogout').onclick = function(){ if(confirm('¿Cerrar sesión?')){ localStorage.removeItem('sb_session'); location.reload(); } };
+  document.getElementById('settingsNewSess').onclick = function(){ if(confirm('¿Nueva sesión? Se perderá el progreso.')){ if(currentUserId&&!currentUserId.startsWith('guest_')) supabase.from('sessions').delete().eq('user_id',currentUserId); localStorage.removeItem('sb_session'); location.reload(); } };
+  document.getElementById('settingsSaveKey').onclick = function(){
+    var k=document.getElementById('settingsKeyInp').value.trim();
+    if(!k){ alert('Ingresá una API key.'); return; }
+    API_KEY=k;
+    if(currentUserId&&!currentUserId.startsWith('guest_')){
+      supabase.from('sessions').upsert({user_id:currentUserId,api_key:k,modelo:selectedModel,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+    }
+    var ks=document.getElementById('keyStatus');
+    ks.style.display='block'; ks.textContent='✅ Key guardada ('+k.substring(0,8)+'••••••••)';
+    document.getElementById('settingsDeleteKey').style.display='inline';
+    document.getElementById('settingsKeyInp').value='';
+    this.textContent='✓ Guardado'; var btn=this; setTimeout(function(){btn.textContent='Guardar';},2000);
+  };
+  document.getElementById('settingsDeleteKey').onclick = function(){
+    if(!confirm('¿Borrar API key?')) return;
+    API_KEY=''; document.getElementById('keyStatus').style.display='none'; this.style.display='none';
+    document.getElementById('settingsKeyInp').value=''; document.getElementById('settingsKeyInp').placeholder='Ingresá tu API key...';
+    if(currentUserId&&!currentUserId.startsWith('guest_')) supabase.from('sessions').upsert({user_id:currentUserId,api_key:''},{onConflict:'user_id'});
+  };
+}
+
 document.getElementById('settingsBtn').onclick = openSettings;
 document.getElementById('settingsClose').onclick = function(){
-  document.getElementById('settingsOverlay').classList.remove('open');
+  document.getElementById('settingsOverlay').style.display='none';
 };
 document.getElementById('settingsOverlay').onclick = function(e){
-  if(e.target===this) this.classList.remove('open');
+  if(e.target===this) this.style.display='none';
 };
 
 document.getElementById('settingsSaveKey').onclick = function(){
