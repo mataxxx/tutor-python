@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v47</title>
+<title>Tutor IA — Python v48</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -175,7 +175,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v47</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v48</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -751,6 +751,8 @@ var codeInput=document.getElementById('codeInput');
 var btn3=document.getElementById('btn3');
 function checkCodeReady(){btn3.disabled=codeInput.value.trim().length<20;}
 codeInput.addEventListener('input',checkCodeReady);
+codeInput.addEventListener('paste',function(){setTimeout(checkCodeReady,50);});
+codeInput.addEventListener('keyup',checkCodeReady);
 
 var dz0=document.getElementById('dropZone0');
 dz0.addEventListener('click',function(){document.getElementById('fileInputHidden').click();});
@@ -771,6 +773,7 @@ function readFile(f){
 }
 
 document.getElementById('btn3back').onclick=function(){goToStep(2);};
+document.getElementById('btn4back').onclick=function(){goToStep(3);};
 document.getElementById('btn3').onclick=function(){
   userCode=codeInput.value.trim();
   goToStep(4);
