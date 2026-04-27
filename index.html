@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v83</title>
+<title>Tutor IA — Python v84</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -202,7 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v83</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v84</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -1307,28 +1307,29 @@ function send(){
 // ── SETTINGS PANEL JS ────────────────────────────────
 function openSettings(){
   createSettingsOverlay();
-  var userEl=document.getElementById('settingsUser');
+  var userEl=_sOverlay.querySelector('#settingsUser');
   if(supabase._user) userEl.textContent='👤 '+supabase._user.email;
   else userEl.textContent='👤 Sin login (solo este dispositivo)';
   setSettingsModel(selectedModel,true);
-  var ks=document.getElementById('keyStatus');
-  var dk=document.getElementById('settingsDeleteKey');
+  var ks=_sOverlay.querySelector('#keyStatus');
+  var dk=_sOverlay.querySelector('#settingsDeleteKey');
+  var ki=_sOverlay.querySelector('#settingsKeyInp');
   if(API_KEY){
     ks.style.display='block'; ks.textContent='✅ Key guardada ('+API_KEY.substring(0,8)+'••••••••)';
     if(dk) dk.style.display='inline';
-    document.getElementById('settingsKeyInp').placeholder='Ingresá nueva key para reemplazar...';
+    ki.placeholder='Ingresá nueva key para reemplazar...';
   } else {
     ks.style.display='none'; if(dk) dk.style.display='none';
-    document.getElementById('settingsKeyInp').placeholder='Ingresá tu API key...';
+    ki.placeholder='Ingresá tu API key...';
   }
-  document.getElementById('settingsKeyInp').value='';
+  ki.value='';
   _sOverlay.style.display='flex';
 }
 
 function setSettingsModel(m, silent){
   if(!silent) selectedModel=m;
   ['anthropic','openai','gemma'].forEach(function(x){
-    var el=document.getElementById('smc-'+x);
+    var el=_sOverlay ? _sOverlay.querySelector('#smc-'+x) : document.getElementById('smc-'+x);
     if(!el) return;
     if(x===m){
       el.style.borderColor='#1f6feb'; el.style.background='rgba(31,111,235,.1)';
@@ -1395,28 +1396,38 @@ function createSettingsOverlay(){
     + '</div></div>';
   document.body.appendChild(el);
   _sOverlay = el;
-  // Wire up events
-  document.getElementById('settingsClose').onclick = function(){ _sOverlay.style.display='none'; };
-  _sOverlay.onclick = function(e){ if(e.target===_sOverlay) _sOverlay.style.display='none'; };
-  document.getElementById('settingsLogout').onclick = function(){ if(confirm('¿Cerrar sesión?')){ localStorage.removeItem('sb_session'); location.reload(); } };
-  document.getElementById('settingsNewSess').onclick = function(){ if(confirm('¿Nueva sesión? Se perderá el progreso.')){ if(currentUserId&&!currentUserId.startsWith('guest_')) supabase.from('sessions').delete().eq('user_id',currentUserId); localStorage.removeItem('sb_session'); location.reload(); } };
-  document.getElementById('settingsSaveKey').onclick = function(){
-    var k=document.getElementById('settingsKeyInp').value.trim();
+  // Wire up events using el.querySelector since elements are now in DOM
+  el.querySelector('#settingsClose').onclick = function(){ _sOverlay.style.display='none'; };
+  el.onclick = function(e){ if(e.target===el) el.style.display='none'; };
+  el.querySelector('#settingsLogout').onclick = function(){
+    if(confirm('¿Cerrar sesión?')){ localStorage.removeItem('sb_session'); location.reload(); }
+  };
+  el.querySelector('#settingsNewSess').onclick = function(){
+    if(confirm('¿Nueva sesión? Se perderá el progreso.')){
+      if(currentUserId&&!currentUserId.startsWith('guest_')) supabase.from('sessions').delete().eq('user_id',currentUserId);
+      localStorage.removeItem('sb_session'); location.reload();
+    }
+  };
+  el.querySelector('#settingsSaveKey').onclick = function(){
+    var k=el.querySelector('#settingsKeyInp').value.trim();
     if(!k){ alert('Ingresá una API key.'); return; }
     API_KEY=k;
     if(currentUserId&&!currentUserId.startsWith('guest_')){
       supabase.from('sessions').upsert({user_id:currentUserId,api_key:k,modelo:selectedModel,updated_at:new Date().toISOString()},{onConflict:'user_id'});
     }
-    var ks=document.getElementById('keyStatus');
+    var ks=el.querySelector('#keyStatus');
     ks.style.display='block'; ks.textContent='✅ Key guardada ('+k.substring(0,8)+'••••••••)';
-    document.getElementById('settingsDeleteKey').style.display='inline';
-    document.getElementById('settingsKeyInp').value='';
+    el.querySelector('#settingsDeleteKey').style.display='inline';
+    el.querySelector('#settingsKeyInp').value='';
     this.textContent='✓ Guardado'; var btn=this; setTimeout(function(){btn.textContent='Guardar';},2000);
   };
-  document.getElementById('settingsDeleteKey').onclick = function(){
+  el.querySelector('#settingsDeleteKey').onclick = function(){
     if(!confirm('¿Borrar API key?')) return;
-    API_KEY=''; document.getElementById('keyStatus').style.display='none'; this.style.display='none';
-    document.getElementById('settingsKeyInp').value=''; document.getElementById('settingsKeyInp').placeholder='Ingresá tu API key...';
+    API_KEY='';
+    el.querySelector('#keyStatus').style.display='none';
+    this.style.display='none';
+    el.querySelector('#settingsKeyInp').value='';
+    el.querySelector('#settingsKeyInp').placeholder='Ingresá tu API key...';
     if(currentUserId&&!currentUserId.startsWith('guest_')) supabase.from('sessions').upsert({user_id:currentUserId,api_key:''},{onConflict:'user_id'});
   };
 }
