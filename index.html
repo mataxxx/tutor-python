@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v44</title>
+<title>Tutor IA — Python v45</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -175,7 +175,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v44</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v45</span></div>
       <div class="step-sub">Ingresá tu email y te mandamos un link para entrar. Sin contraseña. Tu progreso se guarda automáticamente.</div>
       <div>
         <div class="field-lbl">Tu email</div>
@@ -1011,25 +1011,30 @@ window.addEventListener("DOMContentLoaded", function(){
   // Check if magic link token is in URL hash
   var hash = window.location.hash;
   if(hash && hash.includes('access_token')){
-    var params = new URLSearchParams(hash.replace('#',''));
-    var token = params.get('access_token');
-    var expiry = params.get('expires_at') || (Date.now()/1000 + 3600);
-    if(token){
-      // Decode user from JWT
-      try {
-        var payload = JSON.parse(atob(token.split('.')[1]));
+    try {
+      var params = new URLSearchParams(hash.replace(/^#/,''));
+      var token   = params.get('access_token');
+      var refresh = params.get('refresh_token');
+      var expiry  = params.get('expires_at') || String(Math.floor(Date.now()/1000) + 3600);
+      if(token){
+        // base64url decode — fix padding and char substitution
+        var b64 = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+        while(b64.length % 4) b64 += '=';
+        var payload = JSON.parse(atob(b64));
         var sess = {
-          access_token: token,
-          expires_at: parseInt(expiry),
-          user: { id: payload.sub, email: payload.email }
+          access_token:  token,
+          refresh_token: refresh,
+          expires_at:    parseInt(expiry),
+          user: { id: payload.sub, email: payload.email||payload.user_metadata&&payload.user_metadata.email }
         };
         localStorage.setItem('sb_session', JSON.stringify(sess));
         supabase._token = token;
         supabase._user  = sess.user;
-        // Clean URL
+        // Clean URL so token doesn't show
         window.history.replaceState({}, document.title, window.location.pathname);
-      } catch(e){ console.warn('Token parse error:', e); }
-    }
+        console.log('Magic link OK, user:', sess.user.email);
+      }
+    } catch(e){ console.error('Token parse error:', e); }
   }
   checkAuthAndRestore();
 });
