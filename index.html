@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tutor IA — Python v55</title>
+<title>Tutor IA — Python v56</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -176,7 +176,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- STEP 1: LOGIN -->
     <div class="step-body" id="step1">
-      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v55</span></div>
+      <div class="step-title">☁️ Iniciar sesión <span style="font-size:11px;color:#3fb950;font-weight:400">v56</span></div>
       <div class="step-sub">Tu progreso se guarda automáticamente y podés acceder desde cualquier dispositivo.</div>
       <div>
         <div class="field-lbl">Email</div>
@@ -821,7 +821,7 @@ function analyzeCode(){
     fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-opus-4-6',max_tokens:300,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:300,messages:[{role:'user',content:prompt}]})
     }).then(function(r){return r.json();})
     .then(function(d){var txt=((d.content||[]).find(function(b){return b.type==='text';})||{}).text||'No se pudo analizar.';box.textContent=txt;})
     .catch(function(){box.textContent='No se pudo conectar. Igual podés continuar.';});
@@ -1081,7 +1081,7 @@ function callAnthropicAPI(sys, messages, onReply, onError, onDone){
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-opus-4-6',max_tokens:700,system:sys,messages:messages})
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:700,system:sys,messages:messages})
   })
   .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error((e.error&&e.error.message)||'HTTP '+r.status);});return r.json();})
   .then(function(d){
